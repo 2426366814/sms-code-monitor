@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>批量添加功能演示 - 多用户动态验证码监控系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .add-monitor-form {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .form-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .form-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .form-tab.active {
+            border-bottom-color: #4CAF50;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .form-tab:hover {
+            color: #4CAF50;
+        }
+        
+        .add-panel {
+            display: none;
+        }
+        
+        .add-panel.active {
+            display: block;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        
+        .hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        
+        .batch-result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .batch-result.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .batch-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .batch-stat-item {
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(255,255,255,0.5);
+            border-radius: 4px;
+        }
+        
+        .batch-stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .batch-stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .demo-notice {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>多用户动态验证码监控系统</h1>
+        <div style="color: white;">欢迎，admin</div>
+    </div>
+    
+    <div class="container">
+        <div class="demo-notice">
+            <strong>演示模式：</strong>这是批量添加功能的演示页面。实际使用时需要部署到服务器。
+        </div>
+        
+        <div class="main-content">
+            <h2 class="section-title">监控列表</h2>
+            
+            <div class="add-monitor-form" id="addMonitorForm">
+                <div class="form-tabs">
+                    <div class="form-tab active" onclick="switchAddMode('single')">单个添加</div>
+                    <div class="form-tab" onclick="switchAddMode('batch')">批量添加</div>
+                </div>
+                
+                <!-- 单个添加 -->
+                <div id="singleAddPanel" class="add-panel active">
+                    <h3>添加监控项</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">手机号</label>
+                            <input type="text" id="phone" placeholder="请输入手机号" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="url">API URL</label>
+                            <input type="text" id="url" placeholder="请输入API URL" required>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="alert('演示模式：单个添加功能')">添加</button>
+                </div>
+                
+                <!-- 批量添加 -->
+                <div id="batchAddPanel" class="add-panel">
+                    <h3>批量添加监控项</h3>
+                    <div class="form-group">
+                        <label for="batchPhoneList">手机号列表</label>
+                        <textarea id="batchPhoneList" rows="8" placeholder="每行一个手机号，格式：手机号|API URL&#10;例如：&#10;13800138001|https://api.example.com/phone1&#10;13800138002|https://api.example.com/phone2&#10;13800138003|https://api.example.com/phone3"></textarea>
+                        <div class="hint">每行输入一个手机号和API URL，用 | 分隔</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="demoBatchAdd()">批量添加</button>
+                    <div id="batchResult" class="batch-result"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 切换添加模式
+        function switchAddMode(mode) {
+            // 切换标签样式
+            document.querySelectorAll('.form-tab').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 切换面板
+            document.querySelectorAll('.add-panel').forEach(el => el.classList.remove('active'));
+            if (mode === 'single') {
+                document.getElementById('singleAddPanel').classList.add('active');
+            } else {
+                document.getElementById('batchAddPanel').classList.add('active');
+            }
+        }
+        
+        // 演示批量添加
+        function demoBatchAdd() {
+            const batchList = document.getElementById('batchPhoneList').value.trim();
+            const resultDiv = document.getElementById('batchResult');
+            
+            if (!batchList) {
+                resultDiv.innerHTML = '请输入手机号和API URL列表';
+                resultDiv.className = 'batch-result error';
+                return;
+            }
+            
+            const lines = batchList.split('\n').map(l => l.trim()).filter(l => l);
+            const total = lines.length;
+            const successCount = total;
+            const failedCount = 0;
+            
+            // 显示结果
+            let html = `
+                <div class="batch-stats">
+                    <div class="batch-stat-item">
+                        <div class="batch-stat-value">${total}</div>
+                        <div class="batch-stat-label">总计</div>
+                    </div>
+                    <div class="batch-stat-item">
+                        <div class="batch-stat-value" style="color: #4CAF50;">${successCount}</div>
+                        <div class="batch-stat-label">成功</div>
+                    </div>
+                    <div class="batch-stat-item">
+                        <div class="batch-stat-value" style="color: #f44336;">${failedCount}</div>
+                        <div class="batch-stat-label">失败</div>
+                    </div>
+                </div>
+                <div style="text-align: center; color: #4CAF50; font-weight: bold;">
+                    演示模式：批量添加功能已就绪！
+                </div>
+            `;
+            
+            resultDiv.innerHTML = html;
+            resultDiv.className = 'batch-result success';
+            
+            // 清空输入框
+            document.getElementById('batchPhoneList').value = '';
+        }
+    </script>
+</body>
+</html>

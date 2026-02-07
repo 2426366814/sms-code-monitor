@@ -1,0 +1,2670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户中心 - 多用户动态验证码监控系统</title>
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #45a049;
+            --primary-light: #e8f5e9;
+            --secondary: #2196F3;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --info: #00bcd4;
+            --success: #4CAF50;
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f8f9fa;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #8b9dc3;
+            --border-color: #e1e8ed;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 260px;
+            --header-height: 64px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon.success { background: var(--primary-light); color: var(--primary); }
+        .stat-icon.warning { background: #fff3e0; color: var(--warning); }
+        .stat-icon.info { background: #e3f2fd; color: var(--secondary); }
+        .stat-icon.danger { background: #ffebee; color: var(--danger); }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .stat-change.positive { color: var(--success); }
+        .stat-change.negative { color: var(--danger); }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 280px;
+            padding: 10px 16px 10px 40px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Group Filter */
+        .group-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .group-chip {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+        }
+
+        .group-chip:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .group-chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .group-chip .count {
+            margin-left: 6px;
+            padding: 2px 6px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+            font-size: 11px;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        .data-table tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Status Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .badge-success {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .badge-success::before { background: var(--primary); }
+
+        .badge-warning {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .badge-warning::before { background: var(--warning); }
+
+        .badge-error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .badge-error::before { background: var(--danger); }
+
+        .badge-info {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .badge-info::before { background: var(--secondary); }
+
+        /* Code Display */
+        .code-display {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 8px 36px 8px 16px;
+            border-radius: var(--radius-sm);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 2px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .code-display:hover {
+            background: #d4edda;
+        }
+
+        .code-display.empty {
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            cursor: default;
+        }
+
+        .code-display.empty:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .code-display .copy-btn {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .code-display:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .code-display .copy-btn:hover {
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .code-display.copied {
+            background: var(--success);
+            color: white;
+        }
+
+        .code-display.copied .copy-btn {
+            color: white;
+            opacity: 1;
+        }
+
+        /* Phone Display */
+        .phone-display {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .phone-display .group-tag {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Action Buttons */
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .btn-action:hover {
+            background: var(--bg-tertiary);
+            color: var(--primary);
+        }
+
+        .btn-action.danger:hover {
+            color: var(--danger);
+        }
+
+        /* History Grid */
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .history-card {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .history-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .history-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .history-phone {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .history-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .history-code {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 3px;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .history-code-text {
+            cursor: pointer;
+            padding: 4px 12px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+
+        .history-code-text:hover {
+            background: var(--primary-light);
+        }
+
+        .history-code .copy-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .history-code .copy-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .history-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: var(--transition);
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            animation: slideIn 0.3s ease;
+            border-left: 4px solid;
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+        .toast.info { border-left-color: var(--secondary); }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .toast-close {
+            width: 20px;
+            height: 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Page Sections */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Settings */
+        .settings-group {
+            margin-bottom: 32px;
+        }
+
+        .settings-group-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h4 {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .setting-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 24px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--border-color);
+            border-radius: 24px;
+            transition: var(--transition);
+        }
+
+        .toggle-slider:before {
+            content: '';
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: var(--primary);
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Code Notification Modal */
+        .code-notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+        }
+
+        .code-notification {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--primary);
+            animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            min-width: 320px;
+        }
+
+        .code-notification.hiding {
+            animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+
+        .code-notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .code-notification-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-notification-title svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primary);
+        }
+
+        .code-notification-close {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .code-notification-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .code-notification-phone {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .code-notification-code {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 4px;
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .code-notification-code .copy-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .code-notification-code .copy-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .code-notification-code .copy-btn.copied {
+            background: var(--success);
+            color: white;
+        }
+
+        .code-notification-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .code-notification-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 0 0 0 var(--radius-lg);
+            animation: progress 5s linear forwards;
+        }
+
+        @keyframes progress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            .data-table {
+                font-size: 13px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 12px 8px;
+            }
+
+            .history-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    验证码监控
+                </h1>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">主要</div>
+                    <div class="nav-item active" onclick="navigateTo('dashboard')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        监控面板
+                    </div>
+                    <div class="nav-item" onclick="navigateTo('history')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        历史记录
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">管理</div>
+                    <div class="nav-item" onclick="navigateTo('settings')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                        设置
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-info">
+                        <div class="user-name" id="userName">用户</div>
+                        <div class="user-role">普通用户</div>
+                    </div>
+                    <button class="btn-icon" onclick="logout()" title="退出登录">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h2 class="page-title" id="pageTitle">监控面板</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-icon" onclick="refreshAll()" title="刷新全部">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                        </svg>
+                    </button>
+                    <button class="btn-icon" onclick="showAddModal()" title="添加监控">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content">
+                <!-- Dashboard Page -->
+                <div class="page-section active" id="dashboardPage">
+                    <!-- Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-label">监控总数</span>
+                                <div class="stat-icon success">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statTotal">0</div>
+                            <div class="stat-change">所有监控项</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-label">有验证码</span>
+                                <div class="stat-icon info">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statSuccess">0</div>
+                            <div class="stat-change positive">正常获取</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-label">无验证码</span>
+                                <div class="stat-icon warning">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statNoCode">0</div>
+                            <div class="stat-change">等待接收</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-label">请求错误</span>
+                                <div class="stat-icon danger">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statError">0</div>
+                            <div class="stat-change negative">需要检查</div>
+                        </div>
+                    </div>
+
+                    <!-- Monitor List Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">监控列表</h3>
+                            <div class="toolbar-right">
+                                <button class="btn btn-secondary btn-sm" onclick="exportData()">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                    导出
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="clearAll()">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                    清空
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Toolbar -->
+                            <div class="toolbar">
+                                <div class="toolbar-left">
+                                    <div class="search-box">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                        </svg>
+                                        <input type="text" id="searchInput" placeholder="搜索手机号..." oninput="filterMonitors()">
+                                    </div>
+                                </div>
+                                <div class="toolbar-right">
+                                    <button class="btn btn-primary" onclick="showAddModal()">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                        添加监控
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Table -->
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>手机号</th>
+                                            <th>验证码</th>
+                                            <th>状态</th>
+                                            <th>更新时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="monitorTableBody">
+                                        <tr>
+                                            <td colspan="5">
+                                                <div class="empty-state">
+                                                    <div class="empty-state-icon">📱</div>
+                                                    <h3>暂无监控项</h3>
+                                                    <p>点击"添加监控"按钮开始添加</p>
+                                                    <button class="btn btn-primary" onclick="showAddModal()">添加监控</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Page -->
+                <div class="page-section" id="historyPage">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">历史验证码</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="history-grid" id="historyGrid">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📋</div>
+                                    <h3>暂无历史记录</h3>
+                                    <p>验证码获取后将显示在这里</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div class="page-section" id="settingsPage">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">系统设置</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="settings-group">
+                                <div class="settings-group-title">自动刷新</div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>启用自动刷新</h4>
+                                        <p>自动定时刷新所有监控项的状态</p>
+                                    </div>
+                                    <label class="toggle">
+                                        <input type="checkbox" id="autoRefresh" checked onchange="toggleAutoRefresh()">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>刷新间隔</h4>
+                                        <p>设置自动刷新的时间间隔</p>
+                                    </div>
+                                    <select class="form-select" id="refreshInterval" style="width: 120px;" onchange="updateRefreshInterval()">
+                                        <option value="3">3秒</option>
+                                        <option value="5" selected>5秒</option>
+                                        <option value="10">10秒</option>
+                                        <option value="30">30秒</option>
+                                        <option value="60">1分钟</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="settings-group">
+                                <div class="settings-group-title">通知</div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>桌面通知</h4>
+                                        <p>获取到新验证码时显示桌面通知</p>
+                                    </div>
+                                    <label class="toggle">
+                                        <input type="checkbox" id="notifications" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="settings-group">
+                                <div class="settings-group-title">账户安全</div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>修改密码</h4>
+                                        <p>修改您的登录密码</p>
+                                    </div>
+                                    <button class="btn btn-secondary" onclick="showChangePasswordModal()">修改密码</button>
+                                </div>
+                            </div>
+
+                            <div class="settings-group">
+                                <div class="settings-group-title">关于</div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>系统版本</h4>
+                                        <p>当前运行的系统版本</p>
+                                    </div>
+                                    <span style="color: var(--text-muted);">v2.0.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Monitor Modal -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">添加监控项</h3>
+                <button class="modal-close" onclick="closeModal('addModal')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('single')">单个添加</div>
+                    <div class="tab" onclick="switchTab('batch')">批量添加</div>
+                </div>
+
+                <!-- Single Add -->
+                <div id="singleAddPanel" class="tab-panel">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">手机号 *</label>
+                            <input type="text" class="form-input" id="phoneInput" placeholder="请输入手机号">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">API URL *</label>
+                        <input type="text" class="form-input" id="urlInput" placeholder="https://api.example.com/getcode?token=...">
+                        <div class="form-hint">输入获取验证码的API地址</div>
+                    </div>
+                </div>
+
+                <!-- Batch Add -->
+                <div id="batchAddPanel" class="tab-panel" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">批量数据 *</label>
+                        <textarea class="form-textarea" id="batchInput" placeholder="每行一个，格式：手机号|API URL&#10;示例：&#10;13800138001|https://api.example.com/phone1&#10;13800138002|https://api.example.com/phone2&#10;13800138003|https://api.example.com/phone3"></textarea>
+                        <div class="form-hint">每行输入一个监控项，用 | 分隔</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addModal')">取消</button>
+                <button class="btn btn-primary" onclick="submitAdd()">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Code Notification Container -->
+    <div class="code-notification-container" id="codeNotificationContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // State
+        let monitors = [];
+        let history = [];
+        let currentPage = 'dashboard';
+        let autoRefreshInterval = null;
+        let currentUserId = null;
+        let notifiedCodes = new Set(); // Track already notified codes
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadUserInfo();
+            loadMonitors();
+            loadHistory();
+            startAutoRefresh();
+            requestNotificationPermission();
+            
+            // Load notified codes from localStorage
+            const savedNotified = localStorage.getItem('notifiedCodes');
+            if (savedNotified) {
+                notifiedCodes = new Set(JSON.parse(savedNotified));
+            }
+        });
+
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Load user info
+        function loadUserInfo() {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                document.getElementById('userName').textContent = user.username;
+                document.getElementById('userAvatar').textContent = user.username.charAt(0).toUpperCase();
+                currentUserId = user.id;
+            }
+        }
+
+        // Navigation
+        function navigateTo(page) {
+            currentPage = page;
+            
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update page sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(page + 'Page').classList.add('active');
+            
+            // Update page title
+            const titles = {
+                'dashboard': '监控面板',
+                'history': '历史记录',
+                'settings': '设置'
+            };
+            document.getElementById('pageTitle').textContent = titles[page];
+        }
+
+        // Load monitors
+        function loadMonitors() {
+            const token = localStorage.getItem('token');
+            
+            fetch('backend/api/monitors/index.php', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const newMonitors = data.data.list;
+                    
+                    // Check for new codes before updating monitors
+                    if (monitors.length > 0) {
+                        checkNewCodes(newMonitors);
+                    }
+                    
+                    monitors = newMonitors;
+                    updateStats();
+                    renderMonitors();
+                } else {
+                    showToast('error', '加载失败', '无法加载监控列表');
+                }
+            })
+            .catch(error => {
+                showToast('error', '加载失败', '请检查网络连接');
+                console.error('Error:', error);
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = monitors.length;
+            const success = monitors.filter(m => m.status === 'success').length;
+            const noCode = monitors.filter(m => m.status === 'no-code').length;
+            const error = monitors.filter(m => m.status === 'error').length;
+            
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statSuccess').textContent = success;
+            document.getElementById('statNoCode').textContent = noCode;
+            document.getElementById('statError').textContent = error;
+        }
+
+        // Render monitors table
+        function renderMonitors() {
+            const tbody = document.getElementById('monitorTableBody');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            // Filter monitors
+            let filtered = monitors;
+            if (searchTerm) {
+                filtered = filtered.filter(m => m.phone.toLowerCase().includes(searchTerm));
+            }
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📱</div>
+                                <h3>暂无监控项</h3>
+                                <p>点击"添加监控"按钮开始添加</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = filtered.map(monitor => {
+                return `
+                    <tr>
+                        <td>
+                            <div class="phone-display">${monitor.phone}</div>
+                        </td>
+                        <td>
+                            <span class="code-display ${monitor.last_extracted_code ? '' : 'empty'}" ${monitor.last_extracted_code ? `onclick="copyCode('${monitor.last_extracted_code}', this)"` : ''}>
+                                ${monitor.last_extracted_code || '-'}
+                                ${monitor.last_extracted_code ? `
+                                <button class="copy-btn" onclick="event.stopPropagation(); copyCode('${monitor.last_extracted_code}', this.parentElement)" title="复制验证码">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </button>
+                                ` : ''}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge ${getStatusBadgeClass(monitor.status)}">
+                                ${getStatusText(monitor.status)}
+                            </span>
+                        </td>
+                        <td style="color: var(--text-secondary); font-size: 13px;">
+                            ${monitor.last_check_time || '-'}
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-action" onclick="refreshMonitor(${monitor.id})" title="刷新">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 4 23 10 17 10"></polyline>
+                                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                                    </svg>
+                                </button>
+                                <button class="btn-action danger" onclick="deleteMonitor(${monitor.id})" title="删除">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Get status badge class
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'success': return 'badge-success';
+                case 'error': return 'badge-error';
+                case 'no-code': return 'badge-warning';
+                case 'loading': return 'badge-info';
+                default: return 'badge-warning';
+            }
+        }
+
+        // Get status text
+        function getStatusText(status) {
+            switch (status) {
+                case 'success': return '有验证码';
+                case 'error': return '请求错误';
+                case 'no-code': return '无验证码';
+                case 'loading': return '加载中';
+                default: return '未知';
+            }
+        }
+
+        // Filter monitors
+        function filterMonitors() {
+            renderMonitors();
+        }
+
+        // Show add modal
+        function showAddModal() {
+            document.getElementById('addModal').classList.add('active');
+            document.getElementById('phoneInput').focus();
+        }
+
+        // Show group modal
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Switch tab
+        function switchTab(mode) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (mode === 'single') {
+                document.getElementById('singleAddPanel').style.display = 'block';
+                document.getElementById('batchAddPanel').style.display = 'none';
+            } else {
+                document.getElementById('singleAddPanel').style.display = 'none';
+                document.getElementById('batchAddPanel').style.display = 'block';
+            }
+        }
+
+        // Submit add
+        function submitAdd() {
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab.textContent === '单个添加') {
+                addSingleMonitor();
+            } else {
+                addBatchMonitors();
+            }
+        }
+
+        // Add single monitor
+        function addSingleMonitor() {
+            const phone = document.getElementById('phoneInput').value.trim();
+            const url = document.getElementById('urlInput').value.trim();
+            const token = localStorage.getItem('token');
+            
+            if (!phone || !url) {
+                showToast('error', '验证失败', '请填写手机号和API URL');
+                return;
+            }
+            
+            showLoading();
+            
+            fetch('backend/api/monitors/index.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ phone, url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.success) {
+                    showToast('success', '添加成功', `已添加手机号 ${phone}`);
+                    closeModal('addModal');
+                    document.getElementById('phoneInput').value = '';
+                    document.getElementById('urlInput').value = '';
+                    loadMonitors();
+                } else {
+                    showToast('error', '添加失败', data.message || '请稍后重试');
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                showToast('error', '添加失败', '网络错误，请稍后重试');
+                console.error('Error:', error);
+            });
+        }
+
+        // Add batch monitors
+        function addBatchMonitors() {
+            const batchText = document.getElementById('batchInput').value.trim();
+            const token = localStorage.getItem('token');
+            
+            if (!batchText) {
+                showToast('error', '验证失败', '请输入批量数据');
+                return;
+            }
+            
+            const lines = batchText.split('\n').filter(l => l.trim());
+            const items = [];
+            
+            lines.forEach(line => {
+                const parts = line.split('|').map(p => p.trim());
+                if (parts.length >= 2) {
+                    items.push({
+                        phone: parts[0],
+                        url: parts[1]
+                    });
+                }
+            });
+            
+            if (items.length === 0) {
+                showToast('error', '数据格式错误', '请检查输入格式');
+                return;
+            }
+            
+            showLoading();
+            
+            let success = 0;
+            let failed = 0;
+            
+            Promise.all(items.map(item => 
+                fetch('backend/api/monitors/index.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(item)
+                }).then(r => r.json())
+            ))
+            .then(results => {
+                hideLoading();
+                results.forEach(r => {
+                    if (r.success) success++;
+                    else failed++;
+                });
+                
+                showToast('success', '批量添加完成', `成功: ${success}, 失败: ${failed}`);
+                closeModal('addModal');
+                document.getElementById('batchInput').value = '';
+                loadMonitors();
+            })
+            .catch(error => {
+                hideLoading();
+                showToast('error', '添加失败', '网络错误，请稍后重试');
+                console.error('Error:', error);
+            });
+        }
+
+        // Submit group
+        function submitGroup() {
+            const name = document.getElementById('groupNameInput').value.trim();
+            
+            if (!name) {
+                showToast('error', '验证失败', '请输入分组名称');
+                return;
+            }
+            
+            const newGroup = {
+                id: 'group_' + Date.now(),
+                name: name,
+                count: 0,
+                createdAt: new Date().toISOString()
+            };
+            
+            showToast('success', '创建成功', `分组 "${name}" 已创建`);
+            closeModal('groupModal');
+            document.getElementById('groupNameInput').value = '';
+        }
+
+        // Refresh monitor
+        function refreshMonitor(id) {
+            const token = localStorage.getItem('token');
+            
+            fetch(`backend/api/monitors/index.php?id=${id}&action=refresh`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadMonitors();
+                    loadHistory();
+                    showToast('success', '刷新成功', '监控项已更新');
+                } else {
+                    showToast('error', '刷新失败', data.message || '请稍后重试');
+                }
+            })
+            .catch(error => {
+                showToast('error', '刷新失败', '网络错误，请稍后重试');
+                console.error('Error:', error);
+            });
+        }
+
+        // Refresh all
+        function refreshAll() {
+            const token = localStorage.getItem('token');
+            
+            showLoading();
+            
+            fetch('backend/api/monitors/index.php/refresh-all', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.success) {
+                    loadMonitors();
+                    loadHistory();
+                    showToast('success', '刷新成功', '所有监控项已更新');
+                } else {
+                    showToast('error', '刷新失败', data.message || '请稍后重试');
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                showToast('error', '刷新失败', '网络错误，请稍后重试');
+                console.error('Error:', error);
+            });
+        }
+
+        // Delete monitor
+        function deleteMonitor(id) {
+            if (!confirm('确定要删除这个监控项吗？')) return;
+            
+            const token = localStorage.getItem('token');
+            
+            fetch(`backend/api/monitors/index.php?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('success', '删除成功', '监控项已删除');
+                    loadMonitors();
+                } else {
+                    showToast('error', '删除失败', data.message || '请稍后重试');
+                }
+            })
+            .catch(error => {
+                showToast('error', '删除失败', '网络错误，请稍后重试');
+                console.error('Error:', error);
+            });
+        }
+
+        // Clear all
+        function clearAll() {
+            if (!confirm('确定要清除所有监控项吗？此操作不可恢复！')) return;
+            if (!confirm('再次确认：真的要删除所有监控项吗？')) return;
+            
+            const token = localStorage.getItem('token');
+            
+            Promise.all(monitors.map(m => 
+                fetch(`backend/api/monitors/index.php?id=${m.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+            ))
+            .then(() => {
+                showToast('success', '清除成功', '所有监控项已删除');
+                loadMonitors();
+            })
+            .catch(error => {
+                showToast('error', '清除失败', '网络错误，请稍后重试');
+                console.error('Error:', error);
+            });
+        }
+
+        // Export data
+        function exportData() {
+            const token = localStorage.getItem('token');
+            
+            fetch('backend/api/codes/index.php?action=export', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const exportData = data.data.data;
+                    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `captcha_data_${new Date().getTime()}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showToast('success', '导出成功', '数据已导出');
+                } else {
+                    showToast('error', '导出失败', data.message || '请稍后重试');
+                }
+            })
+            .catch(error => {
+                showToast('error', '导出失败', '网络错误，请稍后重试');
+                console.error('Error:', error);
+            });
+        }
+
+        // Load history
+        function loadHistory() {
+            const token = localStorage.getItem('token');
+            
+            fetch('backend/api/codes/index.php', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    history = data.data.list;
+                    renderHistory();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading history:', error);
+            });
+        }
+
+        // Render history
+        function renderHistory() {
+            const grid = document.getElementById('historyGrid');
+            
+            if (history.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <h3>暂无历史记录</h3>
+                        <p>验证码获取后将显示在这里</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const recentHistory = history.slice(0, 12);
+            
+            grid.innerHTML = recentHistory.map(item => `
+                <div class="history-card">
+                    <div class="history-card-header">
+                        <span class="history-phone">${item.phone}</span>
+                        <span class="history-time">${formatTime(item.extracted_time)}</span>
+                    </div>
+                    <div class="history-code">
+                        <span class="history-code-text" onclick="copyCode('${item.code}', this)">${item.code}</span>
+                        <button class="copy-btn" onclick="event.stopPropagation(); copyCode('${item.code}', this)" title="复制验证码">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="history-meta">
+                        <span>来源: ${item.source || 'API'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Format time
+        function formatTime(timeStr) {
+            if (!timeStr) return '-';
+            const date = new Date(timeStr);
+            return date.toLocaleString('zh-CN', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Auto refresh
+        function startAutoRefresh() {
+            const interval = parseInt(document.getElementById('refreshInterval').value) * 1000;
+            
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            autoRefreshInterval = setInterval(() => {
+                const autoRefresh = document.getElementById('autoRefresh').checked;
+                if (autoRefresh && monitors.length > 0) {
+                    refreshAll();
+                }
+            }, interval);
+        }
+
+        function toggleAutoRefresh() {
+            const enabled = document.getElementById('autoRefresh').checked;
+            if (enabled) {
+                startAutoRefresh();
+                showToast('info', '自动刷新', '已启用自动刷新');
+            } else {
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                }
+                showToast('info', '自动刷新', '已停用自动刷新');
+            }
+        }
+
+        function updateRefreshInterval() {
+            startAutoRefresh();
+            showToast('info', '设置已更新', '刷新间隔已更改');
+        }
+
+        // Notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        // Show toast notification
+        function showToast(type, title, message) {
+            const container = document.getElementById('toastContainer');
+            
+            const icons = {
+                success: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+                error: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#f44336" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',
+                warning: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#ff9800" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+                info: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#2196F3" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                ${icons[type]}
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // Loading
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        // Copy code to clipboard
+        function copyCode(code, element) {
+            if (!code || code === '-') return;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                // Visual feedback
+                if (element) {
+                    element.classList.add('copied');
+                    setTimeout(() => {
+                        element.classList.remove('copied');
+                    }, 1500);
+                }
+                
+                showToast('success', '复制成功', `验证码 ${code} 已复制到剪贴板`);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                showToast('error', '复制失败', '请手动复制验证码');
+            });
+        }
+
+        // Show code notification popup
+        function showCodeNotification(phone, code, time) {
+            const container = document.getElementById('codeNotificationContainer');
+            const notificationId = 'notif_' + Date.now();
+            
+            const notification = document.createElement('div');
+            notification.className = 'code-notification';
+            notification.id = notificationId;
+            notification.innerHTML = `
+                <div class="code-notification-header">
+                    <div class="code-notification-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        新验证码
+                    </div>
+                    <button class="code-notification-close" onclick="closeCodeNotification('${notificationId}')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="code-notification-phone">手机号: ${phone}</div>
+                <div class="code-notification-code">
+                    <span>${code}</span>
+                    <button class="copy-btn" onclick="copyCodeFromNotification('${code}', this)" title="复制">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="code-notification-time">${formatTime(time)}</div>
+                <div class="code-notification-progress"></div>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                closeCodeNotification(notificationId);
+            }, 5000);
+        }
+
+        // Close code notification
+        function closeCodeNotification(notificationId) {
+            const notification = document.getElementById(notificationId);
+            if (notification) {
+                notification.classList.add('hiding');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }
+        }
+
+        // Copy code from notification
+        function copyCodeFromNotification(code, btn) {
+            navigator.clipboard.writeText(code).then(() => {
+                btn.classList.add('copied');
+                btn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                `;
+                showToast('success', '复制成功', `验证码 ${code} 已复制`);
+                
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    `;
+                }, 2000);
+            });
+        }
+
+        // Check for new codes and show notifications
+        function checkNewCodes(newMonitors) {
+            const notificationsEnabled = document.getElementById('notifications').checked;
+            
+            newMonitors.forEach(monitor => {
+                if (monitor.last_extracted_code && monitor.status === 'success') {
+                    const codeKey = `${monitor.phone}_${monitor.last_extracted_code}_${monitor.last_check_time}`;
+                    
+                    if (!notifiedCodes.has(codeKey)) {
+                        notifiedCodes.add(codeKey);
+                        
+                        // Save to localStorage (keep last 100 codes)
+                        const codesArray = Array.from(notifiedCodes);
+                        if (codesArray.length > 100) {
+                            notifiedCodes = new Set(codesArray.slice(-100));
+                        }
+                        localStorage.setItem('notifiedCodes', JSON.stringify(Array.from(notifiedCodes)));
+                        
+                        // Show notification
+                        if (notificationsEnabled) {
+                            showCodeNotification(
+                                monitor.phone,
+                                monitor.last_extracted_code,
+                                monitor.last_check_time
+                            );
+                            
+                            // Also show desktop notification if permitted
+                            if ('Notification' in window && Notification.permission === 'granted') {
+                                new Notification('新验证码', {
+                                    body: `手机号: ${monitor.phone}\n验证码: ${monitor.last_extracted_code}`,
+                                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234CAF50"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+                                    requireInteraction: true
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Logout
+        // Show change password modal
+        function showChangePasswordModal() {
+            document.getElementById('changePasswordModal').classList.add('active');
+        }
+
+        // Change password
+        function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+            // Validation
+            if (!currentPassword || !newPassword || !confirmNewPassword) {
+                showToast('error', '错误', '请填写所有密码字段');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showToast('error', '错误', '新密码至少需要6位');
+                return;
+            }
+
+            if (newPassword !== confirmNewPassword) {
+                showToast('error', '错误', '两次输入的新密码不一致');
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+
+            fetch('backend/api/auth/index.php/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    old_password: currentPassword,
+                    new_password: newPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('success', '成功', '密码修改成功，请重新登录');
+                    closeModal('changePasswordModal');
+                    // Clear form
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmNewPassword').value = '';
+                    // Logout after 2 seconds
+                    setTimeout(() => {
+                        logout();
+                    }, 2000);
+                } else {
+                    showToast('error', '错误', data.message || '密码修改失败');
+                }
+            })
+            .catch(error => {
+                showToast('error', '错误', '网络错误，请稍后重试');
+                console.error('Error:', error);
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+            }
+        });
+    </script>
+
+    <!-- Change Password Modal -->
+    <div class="modal-overlay" id="changePasswordModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">修改密码</h3>
+                <button class="modal-close" onclick="closeModal('changePasswordModal')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">当前密码 *</label>
+                    <input type="password" class="form-input" id="currentPassword" placeholder="请输入当前密码">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">新密码 *</label>
+                    <input type="password" class="form-input" id="newPassword" placeholder="请输入新密码（至少6位）">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">确认新密码 *</label>
+                    <input type="password" class="form-input" id="confirmNewPassword" placeholder="请再次输入新密码">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('changePasswordModal')">取消</button>
+                <button class="btn btn-primary" onclick="changePassword()">确认修改</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
