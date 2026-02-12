@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>用户中心 - 多用户动态验证码监控系统</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
         /* CSS Variables for theming */
         :root {
@@ -1264,6 +1265,186 @@
             to { width: 0%; }
         }
 
+        /* Code Modal Styles */
+        .code-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 4000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .code-modal {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 480px;
+            animation: scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .code-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-secondary) 100%);
+        }
+
+        .code-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-modal-title svg {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+        }
+
+        .code-modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .code-modal-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .code-modal-body {
+            padding: 24px;
+        }
+
+        .code-modal-phone {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-modal-phone::before {
+            content: '📱';
+            font-size: 16px;
+        }
+
+        .code-modal-code-container {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-tertiary) 100%);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 16px;
+            border: 2px solid var(--primary);
+        }
+
+        .code-modal-code {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 6px;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .code-modal-copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .code-modal-copy-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+
+        .code-modal-copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .code-modal-copy-btn.copied {
+            background: var(--success);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .code-modal-time {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .code-modal-time::before {
+            content: '🕐';
+        }
+
+        .code-modal-footer {
+            display: flex;
+            gap: 12px;
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+        }
+
+        .code-modal-footer .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .stats-grid {
@@ -1368,7 +1549,7 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">主要</div>
-                    <div class="nav-item active" onclick="navigateTo('dashboard')">
+                    <div class="nav-item active" onclick="navigateTo('dashboard', this)">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7"></rect>
                             <rect x="14" y="3" width="7" height="7"></rect>
@@ -1377,7 +1558,7 @@
                         </svg>
                         监控面板
                     </div>
-                    <div class="nav-item" onclick="navigateTo('history')">
+                    <div class="nav-item" onclick="navigateTo('history', this)">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
@@ -1385,10 +1566,10 @@
                         历史记录
                     </div>
                 </div>
-                
+
                 <div class="nav-section">
                     <div class="nav-section-title">管理</div>
-                    <div class="nav-item" onclick="navigateTo('settings')">
+                    <div class="nav-item" onclick="navigateTo('settings', this)">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="3"></circle>
                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -1687,32 +1868,12 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="tabs">
-                    <div class="tab active" onclick="switchTab('single')">单个添加</div>
-                    <div class="tab" onclick="switchTab('batch')">批量添加</div>
-                </div>
-
-                <!-- Single Add -->
-                <div id="singleAddPanel" class="tab-panel">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">手机号 *</label>
-                            <input type="text" class="form-input" id="phoneInput" placeholder="请输入手机号">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">API URL *</label>
-                        <input type="text" class="form-input" id="urlInput" placeholder="https://api.example.com/getcode?token=...">
-                        <div class="form-hint">输入获取验证码的API地址</div>
-                    </div>
-                </div>
-
-                <!-- Batch Add -->
-                <div id="batchAddPanel" class="tab-panel" style="display: none;">
+                <!-- Batch Add Only -->
+                <div id="batchAddPanel" class="tab-panel" style="display: block;">
                     <div class="form-group">
                         <label class="form-label">批量数据 *</label>
-                        <textarea class="form-textarea" id="batchInput" placeholder="每行一个，格式：手机号|API URL&#10;示例：&#10;13800138001|https://api.example.com/phone1&#10;13800138002|https://api.example.com/phone2&#10;13800138003|https://api.example.com/phone3"></textarea>
-                        <div class="form-hint">每行输入一个监控项，用 | 分隔</div>
+                        <textarea class="form-textarea" id="batchInput" placeholder="每行一个，支持多种分隔符：| ---- === ### 空格 , 制表符&#10;示例：&#10;13800138001|https://api.example.com/phone1&#10;+85255614436----https://api.example.com/phone2&#10;+14155552671===https://api.example.com/phone3&#10;+8613800138000 https://api.example.com/phone4"></textarea>
+                        <div class="form-hint">支持多种分隔符：| ---- === ### 逗号 空格 制表符</div>
                     </div>
                 </div>
             </div>
@@ -1729,6 +1890,45 @@
     <!-- Code Notification Container -->
     <div class="code-notification-container" id="codeNotificationContainer"></div>
 
+    <!-- Code Modal Popup -->
+    <div class="code-modal-overlay" id="codeModalOverlay" style="display: none;">
+        <div class="code-modal">
+            <div class="code-modal-header">
+                <div class="code-modal-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <span id="codeModalTitle">新验证码</span>
+                </div>
+                <button class="code-modal-close" onclick="closeCodeModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="code-modal-body">
+                <div class="code-modal-phone" id="codeModalPhone">手机号: </div>
+                <div class="code-modal-code-container">
+                    <div class="code-modal-code" id="codeModalCode"></div>
+                    <button class="code-modal-copy-btn" id="codeModalCopyBtn" onclick="copyCodeFromModal()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        一键复制
+                    </button>
+                </div>
+                <div class="code-modal-time" id="codeModalTime"></div>
+            </div>
+            <div class="code-modal-footer">
+                <button class="btn btn-secondary" onclick="closeCodeModal()">关闭</button>
+                <button class="btn btn-primary" onclick="copyCodeFromModal()">复制并关闭</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
@@ -1742,6 +1942,14 @@
         let autoRefreshInterval = null;
         let currentUserId = null;
         let notifiedCodes = new Set(); // Track already notified codes
+
+        // HTML escape function to prevent XSS
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1779,14 +1987,16 @@
         }
 
         // Navigation
-        function navigateTo(page) {
+        function navigateTo(page, clickedElement) {
             currentPage = page;
             
             // Update nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.currentTarget.classList.add('active');
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            }
             
             // Update page sections
             document.querySelectorAll('.page-section').forEach(section => {
@@ -1803,8 +2013,8 @@
             document.getElementById('pageTitle').textContent = titles[page];
         }
 
-        // Load monitors
-        function loadMonitors() {
+        // Load monitors - silent background refresh
+        function loadMonitors(silent = false) {
             const token = localStorage.getItem('token');
             
             fetch('backend/api/monitors/index.php', {
@@ -1812,26 +2022,32 @@
                     'Authorization': `Bearer ${token}`
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.success) {
+                if (data.success && data.data && Array.isArray(data.data.list)) {
                     const newMonitors = data.data.list;
-                    
+
                     // Check for new codes before updating monitors
-                    if (monitors.length > 0) {
+                    if (monitors && monitors.length > 0) {
                         checkNewCodes(newMonitors);
                     }
-                    
+
                     monitors = newMonitors;
-                    updateStats();
-                    renderMonitors();
-                } else {
-                    showToast('error', '加载失败', '无法加载监控列表');
+                    
+                    // Only update UI if not silent mode
+                    if (!silent) {
+                        updateStats();
+                        renderMonitors();
+                    }
                 }
             })
             .catch(error => {
-                showToast('error', '加载失败', '请检查网络连接');
-                console.error('Error:', error);
+                console.error('Silent refresh error:', error);
             });
         }
 
@@ -1848,7 +2064,7 @@
             document.getElementById('statError').textContent = error;
         }
 
-        // Render monitors table
+        // Render monitors table with incremental updates to avoid flickering
         function renderMonitors() {
             const tbody = document.getElementById('monitorTableBody');
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
@@ -1874,52 +2090,90 @@
                 return;
             }
             
-            tbody.innerHTML = filtered.map(monitor => {
-                return `
-                    <tr>
-                        <td>
-                            <div class="phone-display">${monitor.phone}</div>
-                        </td>
-                        <td>
-                            <span class="code-display ${monitor.last_extracted_code ? '' : 'empty'}" ${monitor.last_extracted_code ? `onclick="copyCode('${monitor.last_extracted_code}', this)"` : ''}>
-                                ${monitor.last_extracted_code || '-'}
-                                ${monitor.last_extracted_code ? `
-                                <button class="copy-btn" onclick="event.stopPropagation(); copyCode('${monitor.last_extracted_code}', this.parentElement)" title="复制验证码">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                </button>
-                                ` : ''}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge ${getStatusBadgeClass(monitor.status)}">
-                                ${getStatusText(monitor.status)}
-                            </span>
-                        </td>
-                        <td style="color: var(--text-secondary); font-size: 13px;">
-                            ${monitor.last_check_time || '-'}
-                        </td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn-action" onclick="refreshMonitor(${monitor.id})" title="刷新">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="23 4 23 10 17 10"></polyline>
-                                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                                    </svg>
-                                </button>
-                                <button class="btn-action danger" onclick="deleteMonitor(${monitor.id})" title="删除">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="3 6 5 6 21 6"></polyline>
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+            // Get existing rows
+            const existingRows = Array.from(tbody.querySelectorAll('tr[data-monitor-id]'));
+            const existingIds = existingRows.map(row => parseInt(row.dataset.monitorId));
+            const newIds = filtered.map(m => m.id);
+            
+            // Remove rows that no longer exist
+            existingRows.forEach(row => {
+                const id = parseInt(row.dataset.monitorId);
+                if (!newIds.includes(id)) {
+                    row.remove();
+                }
+            });
+            
+            // Update or create rows
+            filtered.forEach((monitor, index) => {
+                const phone = escapeHtml(monitor.phone);
+                const code = escapeHtml(monitor.last_extracted_code);
+                const checkTime = escapeHtml(monitor.last_check_time);
+                const rowId = `monitor-row-${monitor.id}`;
+                let row = document.getElementById(rowId);
+                
+                const newRowHtml = `
+                    <td>
+                        <div class="phone-display">${phone}</div>
+                    </td>
+                    <td>
+                        <span class="code-display ${code ? '' : 'empty'}" ${code ? `onclick="copyCode('${code}', this)"` : ''}>
+                            ${code || '-'}
+                            ${code ? `
+                            <button class="copy-btn" onclick="event.stopPropagation(); copyCode('${code}', this.parentElement)" title="复制验证码">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                            ` : ''}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge ${getStatusBadgeClass(monitor.status)}">
+                            ${getStatusText(monitor.status)}
+                        </span>
+                    </td>
+                    <td style="color: var(--text-secondary); font-size: 13px;">
+                        ${checkTime || '-'}
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-action" onclick="refreshMonitor(${monitor.id})" title="刷新">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23 4 23 10 17 10"></polyline>
+                                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                                </svg>
+                            </button>
+                            <button class="btn-action danger" onclick="deleteMonitor(${monitor.id})" title="删除">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
                 `;
-            }).join('');
+                
+                if (row) {
+                    // Update existing row only if content changed
+                    if (row.innerHTML !== newRowHtml) {
+                        row.innerHTML = newRowHtml;
+                    }
+                } else {
+                    // Create new row
+                    row = document.createElement('tr');
+                    row.id = rowId;
+                    row.dataset.monitorId = monitor.id;
+                    row.innerHTML = newRowHtml;
+                    
+                    // Insert at correct position
+                    if (index < tbody.children.length) {
+                        tbody.insertBefore(row, tbody.children[index]);
+                    } else {
+                        tbody.appendChild(row);
+                    }
+                }
+            });
         }
 
         // Get status badge class
@@ -1952,7 +2206,10 @@
         // Show add modal
         function showAddModal() {
             document.getElementById('addModal').classList.add('active');
-            document.getElementById('phoneInput').focus();
+            const phoneInput = document.getElementById('phoneInput');
+            if (phoneInput) {
+                phoneInput.focus();
+            }
         }
 
         // Show group modal
@@ -1962,9 +2219,11 @@
         }
 
         // Switch tab
-        function switchTab(mode) {
+        function switchTab(mode, clickedTab) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
+            if (clickedTab) {
+                clickedTab.classList.add('active');
+            }
             
             if (mode === 'single') {
                 document.getElementById('singleAddPanel').style.display = 'block';
@@ -1977,80 +2236,104 @@
 
         // Submit add
         function submitAdd() {
-            const activeTab = document.querySelector('.tab.active');
-            if (activeTab.textContent === '单个添加') {
-                addSingleMonitor();
-            } else {
-                addBatchMonitors();
-            }
+            addBatchMonitors();
         }
 
-        // Add single monitor
-        function addSingleMonitor() {
-            const phone = document.getElementById('phoneInput').value.trim();
-            const url = document.getElementById('urlInput').value.trim();
-            const token = localStorage.getItem('token');
-            
-            if (!phone || !url) {
-                showToast('error', '验证失败', '请填写手机号和API URL');
-                return;
-            }
-            
-            showLoading();
-            
-            fetch('backend/api/monitors/index.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ phone, url })
-            })
-            .then(response => response.json())
-            .then(data => {
-                hideLoading();
-                if (data.success) {
-                    showToast('success', '添加成功', `已添加手机号 ${phone}`);
-                    closeModal('addModal');
-                    document.getElementById('phoneInput').value = '';
-                    document.getElementById('urlInput').value = '';
-                    loadMonitors();
-                } else {
-                    showToast('error', '添加失败', data.message || '请稍后重试');
+        // Parse batch data with multiple separator support
+        function parseBatchData(text) {
+            const lines = text.split('\n').filter(l => l.trim());
+            const items = [];
+
+            lines.forEach(line => {
+                let phone, url;
+
+                // Try different separators in order of priority
+                // 1. ---- (4+ dashes, common in some data formats)
+                if (line.match(/-{4,}/)) {
+                    const parts = line.split(/-{4,}/).map(p => p.trim());
+                    if (parts.length >= 2) {
+                        phone = parts[0];
+                        url = parts[1];
+                    }
                 }
-            })
-            .catch(error => {
-                hideLoading();
-                showToast('error', '添加失败', '网络错误，请稍后重试');
-                console.error('Error:', error);
+                // 2. | (pipe)
+                else if (line.includes('|')) {
+                    const parts = line.split('|').map(p => p.trim());
+                    if (parts.length >= 2) {
+                        phone = parts[0];
+                        url = parts[1];
+                    }
+                }
+                // 3. \t (tab)
+                else if (line.includes('\t')) {
+                    const parts = line.split('\t').map(p => p.trim());
+                    if (parts.length >= 2) {
+                        phone = parts[0];
+                        url = parts[1];
+                    }
+                }
+                // 4. , (comma)
+                else if (line.includes(',')) {
+                    const parts = line.split(',').map(p => p.trim());
+                    if (parts.length >= 2) {
+                        phone = parts[0];
+                        url = parts[1];
+                    }
+                }
+                // 5. === (3+ equals)
+                else if (line.match(/={3,}/)) {
+                    const parts = line.split(/={3,}/).map(p => p.trim());
+                    if (parts.length >= 2) {
+                        phone = parts[0];
+                        url = parts[1];
+                    }
+                }
+                // 6. ### (3+ hash)
+                else if (line.match(/#{3,}/)) {
+                    const parts = line.split(/#{3,}/).map(p => p.trim());
+                    if (parts.length >= 2) {
+                        phone = parts[0];
+                        url = parts[1];
+                    }
+                }
+                // 7. Space separator (at least 2 spaces)
+                else {
+                    const parts = line.split(/\s{2,}/).map(p => p.trim());
+                    if (parts.length >= 2) {
+                        phone = parts[0];
+                        url = parts[1];
+                    } else {
+                        // Single space - check if second part looks like a URL
+                        const spaceParts = line.split(' ').map(p => p.trim());
+                        if (spaceParts.length >= 2 && spaceParts[1].startsWith('http')) {
+                            phone = spaceParts[0];
+                            url = spaceParts[1];
+                        }
+                    }
+                }
+
+                if (phone && url) {
+                    items.push({ phone_number: phone, url: url });
+                }
             });
+
+            return items;
         }
 
         // Add batch monitors
         function addBatchMonitors() {
             const batchText = document.getElementById('batchInput').value.trim();
             const token = localStorage.getItem('token');
-            
+
             if (!batchText) {
                 showToast('error', '验证失败', '请输入批量数据');
                 return;
             }
-            
-            const lines = batchText.split('\n').filter(l => l.trim());
-            const items = [];
-            
-            lines.forEach(line => {
-                const parts = line.split('|').map(p => p.trim());
-                if (parts.length >= 2) {
-                    items.push({
-                        phone: parts[0],
-                        url: parts[1]
-                    });
-                }
-            });
-            
+
+            const items = parseBatchData(batchText);
+
             if (items.length === 0) {
-                showToast('error', '数据格式错误', '请检查输入格式');
+                showToast('error', '数据格式错误', '请检查输入格式，支持：手机号|URL、手机号,URL、手机号 URL、手机号\tURL');
                 return;
             }
             
@@ -2059,18 +2342,28 @@
             let success = 0;
             let failed = 0;
             
-            Promise.all(items.map(item => 
-                fetch('backend/api/monitors/index.php', {
+            Promise.all(items.map(item =>
+                fetch(`backend/api/monitors/index.php?t=${Date.now()}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify(item)
-                }).then(r => r.json())
+                }).then(async r => {
+                    const text = await r.text();
+                    console.log('API Response:', r.status, text);
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error('JSON Parse Error:', text);
+                        return { success: false, message: 'Invalid JSON: ' + text };
+                    }
+                })
             ))
             .then(results => {
                 hideLoading();
+                console.log('Results:', results);
                 results.forEach(r => {
                     if (r.success) success++;
                     else failed++;
@@ -2086,27 +2379,6 @@
                 showToast('error', '添加失败', '网络错误，请稍后重试');
                 console.error('Error:', error);
             });
-        }
-
-        // Submit group
-        function submitGroup() {
-            const name = document.getElementById('groupNameInput').value.trim();
-            
-            if (!name) {
-                showToast('error', '验证失败', '请输入分组名称');
-                return;
-            }
-            
-            const newGroup = {
-                id: 'group_' + Date.now(),
-                name: name,
-                count: 0,
-                createdAt: new Date().toISOString()
-            };
-            
-            showToast('success', '创建成功', `分组 "${name}" 已创建`);
-            closeModal('groupModal');
-            document.getElementById('groupNameInput').value = '';
         }
 
         // Refresh monitor
@@ -2321,7 +2593,7 @@
             });
         }
 
-        // Auto refresh
+        // Auto refresh - silent background check for new codes only
         function startAutoRefresh() {
             const interval = parseInt(document.getElementById('refreshInterval').value) * 1000;
             
@@ -2331,8 +2603,9 @@
             
             autoRefreshInterval = setInterval(() => {
                 const autoRefresh = document.getElementById('autoRefresh').checked;
-                if (autoRefresh && monitors.length > 0) {
-                    refreshAll();
+                if (autoRefresh) {
+                    // Silent background refresh - only check for new codes, don't update UI
+                    loadMonitors(true);
                 }
             }, interval);
         }
@@ -2427,51 +2700,70 @@
             });
         }
 
-        // Show code notification popup
+        // Show code modal popup (replaces notification)
+        let currentModalCode = '';
+        
         function showCodeNotification(phone, code, time) {
-            const container = document.getElementById('codeNotificationContainer');
-            const notificationId = 'notif_' + Date.now();
+            currentModalCode = code;
             
-            const notification = document.createElement('div');
-            notification.className = 'code-notification';
-            notification.id = notificationId;
-            notification.innerHTML = `
-                <div class="code-notification-header">
-                    <div class="code-notification-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        新验证码
-                    </div>
-                    <button class="code-notification-close" onclick="closeCodeNotification('${notificationId}')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
-                </div>
-                <div class="code-notification-phone">手机号: ${phone}</div>
-                <div class="code-notification-code">
-                    <span>${code}</span>
-                    <button class="copy-btn" onclick="copyCodeFromNotification('${code}', this)" title="复制">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div class="code-notification-time">${formatTime(time)}</div>
-                <div class="code-notification-progress"></div>
-            `;
+            // Update modal content
+            document.getElementById('codeModalTitle').textContent = `新验证码 - ${phone}`;
+            document.getElementById('codeModalPhone').textContent = `手机号: ${phone}`;
+            document.getElementById('codeModalCode').textContent = code;
+            document.getElementById('codeModalTime').textContent = formatTime(time);
             
-            container.appendChild(notification);
+            // Show modal
+            const modal = document.getElementById('codeModalOverlay');
+            modal.style.display = 'flex';
             
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                closeCodeNotification(notificationId);
-            }, 5000);
+            // Play notification sound if enabled
+            const soundEnabled = document.getElementById('soundEnabled')?.checked;
+            if (soundEnabled && window.notificationSound) {
+                window.notificationSound.play().catch(e => console.log('Sound play failed:', e));
+            }
         }
+        
+        // Close code modal
+        function closeCodeModal() {
+            const modal = document.getElementById('codeModalOverlay');
+            modal.style.display = 'none';
+            currentModalCode = '';
+        }
+        
+        // Copy code from modal
+        function copyCodeFromModal() {
+            if (!currentModalCode) return;
+            
+            navigator.clipboard.writeText(currentModalCode).then(() => {
+                const btn = document.getElementById('codeModalCopyBtn');
+                const originalHTML = btn.innerHTML;
+                
+                btn.classList.add('copied');
+                btn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    已复制
+                `;
+                
+                showToast('success', '复制成功', `验证码 ${currentModalCode} 已复制到剪贴板`);
+                
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = originalHTML;
+                }, 2000);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                showToast('error', '复制失败', '请手动复制验证码');
+            });
+        }
+        
+        // Close modal when clicking overlay
+        document.getElementById('codeModalOverlay')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCodeModal();
+            }
+        });
 
         // Close code notification
         function closeCodeNotification(notificationId) {
