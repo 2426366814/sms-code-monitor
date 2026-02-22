@@ -29,12 +29,7 @@ class MonitorModel extends BaseModel {
             $sqlParams[] = $params['status'];
         }
         
-        if (!empty($params['keyword'])) {
-            $sql .= " AND (name LIKE ? OR description LIKE ?)";
-            $keyword = '%' . $params['keyword'] . '%';
-            $sqlParams[] = $keyword;
-            $sqlParams[] = $keyword;
-        }
+        // keyword search removed - description field not in database schema
         
         $sql .= " ORDER BY id DESC LIMIT ? OFFSET ?";
         $sqlParams[] = $limit;
@@ -58,12 +53,7 @@ class MonitorModel extends BaseModel {
             $sqlParams[] = $params['status'];
         }
         
-        if (!empty($params['keyword'])) {
-            $sql .= " AND (name LIKE ? OR description LIKE ?)";
-            $keyword = '%' . $params['keyword'] . '%';
-            $sqlParams[] = $keyword;
-            $sqlParams[] = $keyword;
-        }
+        // keyword search removed - description field not in database schema
         
         $result = $this->db->fetchOne($sql, $sqlParams);
         return $result ? (int)$result['count'] : 0;
@@ -94,6 +84,22 @@ class MonitorModel extends BaseModel {
      */
     public function createMonitor($data) {
         return $this->insert($data);
+    }
+
+    /**
+     * 根据手机号获取监控项
+     * @param string $phoneNumber
+     * @param int $userId
+     * @return array|null
+     */
+    public function getMonitorByPhoneNumber($phoneNumber, $userId) {
+        // 使用phone字段，与数据库表结构一致
+        $sql = "SELECT * FROM {$this->table} WHERE phone = :phone AND user_id = :user_id LIMIT 1";
+        $pdo = $this->db->getPdo();
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':phone' => $phoneNumber, ':user_id' => $userId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
     }
     
     /**

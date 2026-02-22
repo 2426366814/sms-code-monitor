@@ -4,6 +4,10 @@
  * 用于管理监控的手机号
  */
 
+// 开启错误报告
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -19,18 +23,39 @@ require_once '../../utils/Database.php';
 require_once '../../utils/JWT.php';
 require_once '../../utils/Response.php';
 require_once '../../models/MonitorModel.php';
+require_once '../../models/CodeModel.php';
 
 // 获取请求方法
 $method = $_SERVER['REQUEST_METHOD'];
 
 // 获取请求路径
-$path = isset($_GET['path']) ? $_GET['path'] : '';
+// 支持两种格式：
+// 1. index.php?path=xxx (通过path参数)
+// 2. index.php/xxx (通过PATH_INFO)
+$path = '';
+if (isset($_GET['path']) && !empty($_GET['path'])) {
+    $path = $_GET['path'];
+} elseif (isset($_SERVER['PATH_INFO']) && !empty($_SERVER['PATH_INFO'])) {
+    $path = $_SERVER['PATH_INFO'];
+} elseif (isset($_SERVER['REQUEST_URI'])) {
+    // 从REQUEST_URI中提取路径
+    $uri = $_SERVER['REQUEST_URI'];
+    $scriptName = $_SERVER['SCRIPT_NAME'];
+    if (strpos($uri, $scriptName) === 0) {
+        $path = substr($uri, strlen($scriptName));
+        // 去掉查询字符串
+        if (($pos = strpos($path, '?')) !== false) {
+            $path = substr($path, 0, $pos);
+        }
+    }
+}
 $parts = explode('/', trim($path, '/'));
 
 // 初始化数据库连接
 $config = require '../../config/config.php';
 $database = Database::getInstance();
 $monitorModel = new MonitorModel();
+$codeModel = new CodeModel();
 $jwt = new JWT($config['jwt']['secret'], $config['jwt']['algorithm']);
 
 // 验证认证
@@ -79,6 +104,19 @@ switch ($method) {
     case 'POST':
         // 处理POST请求
         $data = json_decode(file_get_contents('php://input'), true);
+        
+        // 检查是否是刷新操作（通过URL参数）
+        $action = $_GET['action'] ?? '';
+        $id = $_GET['id'] ?? null;
+        
+        if ($action === 'refresh' && $id) {
+            // 刷新单个监控
+            $payload = verifyAuth($jwt);
+            if (!$payload) return;
+            refreshMonitor($id, $payload, $monitorModel);
+            break;
+        }
+        
         switch ($parts[0] ?? '') {
             case '':
                 // 添加监控
@@ -143,7 +181,7 @@ switch ($method) {
 function getMonitors($payload, $monitorModel) {
     try {
         $monitors = $monitorModel->getMonitorsByUserId($payload['user_id']);
-        Response::success(['monitors' => $monitors], '获取成功');
+        Response::success(['list' => $monitors], '获取成功');
     } catch (Exception $e) {
         Response::error('获取监控列表失败: ' . $e->getMessage(), 500);
     }
@@ -160,26 +198,50 @@ function addMonitor($data, $payload, $monitorModel) {
             return;
         }
 
-        // 验证手机号格式
-        if (!preg_match('/^1[3-9]\d{9}$/', $data['phone_number'])) {
-            Response::error('手机号格式不正确', 400);
+        // 验证手机号格式（支持中国大陆、香港等国际号码）
+        // 支持格式：13800138000、+85255614436、+14155552671等
+        $phone = $data['phone_number'];
+        $isValid = false;
+        
+        // 中国大陆手机号：1开头，11位
+        if (preg_match('/^1[3-9]\d{9}$/', $phone)) {
+            $isValid = true;
+        }
+        // 国际号码：+开头，后跟国家码和号码（至少8位）
+        elseif (preg_match('/^\+\d{1,4}\d{7,15}$/', $phone)) {
+            $isValid = true;
+        }
+        // 纯数字，8-15位（兼容旧格式）
+        elseif (preg_match('/^\d{8,15}$/', $phone)) {
+            $isValid = true;
+        }
+        
+        if (!$isValid) {
+            Response::error('手机号格式不正确，请使用格式：13800138000 或 +85255614436', 400);
             return;
         }
 
-        // 检查是否已存在
+        // 检查是否已存在（使用phone字段，与数据库一致）
         $existing = $monitorModel->getMonitorByPhoneNumber($data['phone_number'], $payload['user_id']);
         if ($existing) {
             Response::error('该手机号已在监控列表中', 400);
             return;
         }
 
-        // 创建监控
-        $monitorId = $monitorModel->createMonitor([
+        // 创建监控（使用phone字段，与数据库一致）
+        // 状态使用 'no-code' 表示等待接收验证码，与前端显示一致
+        $monitorData = [
             'user_id' => $payload['user_id'],
-            'phone_number' => $data['phone_number'],
-            'description' => $data['description'] ?? '',
-            'status' => 'active'
-        ]);
+            'phone' => $data['phone_number'],
+            'status' => 'no-code'
+        ];
+        
+        // 保存API URL（如果提供了）
+        if (isset($data['url']) && !empty($data['url'])) {
+            $monitorData['url'] = $data['url'];
+        }
+        
+        $monitorId = $monitorModel->createMonitor($monitorData);
 
         if ($monitorId) {
             Response::success(['id' => $monitorId], '添加成功');
@@ -205,8 +267,17 @@ function batchAddMonitors($data, $payload, $monitorModel) {
         $failed = [];
 
         foreach ($data['phone_numbers'] as $phoneNumber) {
-            // 验证手机号格式
-            if (!preg_match('/^1[3-9]\d{9}$/', $phoneNumber)) {
+            // 验证手机号格式（支持中国大陆、香港等国际号码）
+            $isValid = false;
+            if (preg_match('/^1[3-9]\d{9}$/', $phoneNumber)) {
+                $isValid = true;
+            } elseif (preg_match('/^\+\d{1,4}\d{7,15}$/', $phoneNumber)) {
+                $isValid = true;
+            } elseif (preg_match('/^\d{8,15}$/', $phoneNumber)) {
+                $isValid = true;
+            }
+            
+            if (!$isValid) {
                 $failed[] = ['phone_number' => $phoneNumber, 'reason' => '格式不正确'];
                 continue;
             }
@@ -218,12 +289,12 @@ function batchAddMonitors($data, $payload, $monitorModel) {
                 continue;
             }
 
-            // 创建监控
+            // 创建监控（使用phone字段，与数据库一致）
+            // 状态使用 'no-code' 表示等待接收验证码，与前端显示一致
             $monitorId = $monitorModel->createMonitor([
                 'user_id' => $payload['user_id'],
-                'phone_number' => $phoneNumber,
-                'description' => '',
-                'status' => 'active'
+                'phone' => $phoneNumber,
+                'status' => 'no-code'
             ]);
 
             if ($monitorId) {
@@ -261,9 +332,7 @@ function updateMonitor($data, $payload, $monitorModel) {
         }
 
         $updateData = [];
-        if (isset($data['description'])) {
-            $updateData['description'] = $data['description'];
-        }
+        // description field removed - not in database schema
         if (isset($data['status'])) {
             $updateData['status'] = $data['status'];
         }
@@ -315,13 +384,14 @@ function deleteMonitor($data, $payload, $monitorModel) {
  * 刷新所有监控
  */
 function refreshAllMonitors($payload, $monitorModel) {
+    global $codeModel;
     try {
         $monitors = $monitorModel->getMonitorsByUserId($payload['user_id']);
         
         // 更新所有监控项的状态
         foreach ($monitors as &$monitor) {
             // 检查是否有新验证码
-            $latestCode = $monitorModel->getLatestCode($monitor['id']);
+            $latestCode = $codeModel->getLatestCode($monitor['id']);
             if ($latestCode) {
                 $monitor['latest_code'] = $latestCode['code'];
                 $monitor['code_time'] = $latestCode['created_at'];
@@ -332,6 +402,41 @@ function refreshAllMonitors($payload, $monitorModel) {
         }
 
         Response::success(['monitors' => $monitors], '刷新成功');
+    } catch (Exception $e) {
+        Response::error('刷新监控失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 刷新单个监控
+ */
+function refreshMonitor($id, $payload, $monitorModel) {
+    global $codeModel;
+    try {
+        // 获取监控项
+        $monitor = $monitorModel->getById($id);
+        if (!$monitor) {
+            Response::error('监控项不存在', 404);
+            return;
+        }
+        
+        // 检查权限
+        if ($monitor['user_id'] != $payload['user_id']) {
+            Response::error('无权操作此监控项', 403);
+            return;
+        }
+        
+        // 检查是否有新验证码
+        $latestCode = $codeModel->getLatestCode($id);
+        if ($latestCode) {
+            $monitor['latest_code'] = $latestCode['code'];
+            $monitor['code_time'] = $latestCode['created_at'];
+            $monitor['has_code'] = true;
+        } else {
+            $monitor['has_code'] = false;
+        }
+        
+        Response::success(['monitor' => $monitor], '刷新成功');
     } catch (Exception $e) {
         Response::error('刷新监控失败: ' . $e->getMessage(), 500);
     }

@@ -288,7 +288,8 @@ function refreshToken($data, $jwt, $response) {
         $newToken = $jwt->generateToken([
             'user_id' => $payload['user_id'],
             'username' => $payload['username'],
-            'email' => $payload['email']
+            'email' => $payload['email'],
+            'is_admin' => !empty($payload['is_admin'])
         ]);
 
         // 返回响应

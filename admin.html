@@ -1191,6 +1191,18 @@
         .result-item.error {
             color: var(--danger);
         }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
     </style>
 </head>
 <body>
@@ -1213,12 +1225,12 @@
             <div class="login-error" id="loginError"></div>
             <form class="login-form" onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label class="form-label">用户名/邮箱</label>
-                    <input type="text" class="form-input" id="loginUsername" placeholder="请输入用户名或邮箱" required>
+                    <label class="form-label" for="loginUsername">用户名/邮箱</label>
+                    <input type="text" class="form-input" id="loginUsername" name="username" placeholder="请输入用户名或邮箱" autocomplete="username" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">密码</label>
-                    <input type="password" class="form-input" id="loginPassword" placeholder="请输入密码" required>
+                    <label class="form-label" for="loginPassword">密码</label>
+                    <input type="password" class="form-input" id="loginPassword" name="password" placeholder="请输入密码" autocomplete="current-password" required>
                 </div>
                 <button type="submit" class="btn btn-primary">登录</button>
             </form>
@@ -1238,19 +1250,19 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">主菜单</div>
-                    <div class="nav-item active" onclick="navigateTo('dashboard')">
+                    <div class="nav-item active" onclick="navigateTo('dashboard', this)">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                         </svg>
                         控制面板
                     </div>
-                    <div class="nav-item" onclick="navigateTo('users')">
+                    <div class="nav-item" onclick="navigateTo('users', this)">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                         </svg>
                         用户管理
                     </div>
-                    <div class="nav-item" onclick="navigateTo('monitors')">
+                    <div class="nav-item" onclick="navigateTo('monitors', this)">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
@@ -1259,7 +1271,7 @@
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">工具</div>
-                    <div class="nav-item" onclick="navigateTo('batch-phones')">
+                    <div class="nav-item" onclick="navigateTo('batch-phones', this)">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                         </svg>
@@ -1268,7 +1280,7 @@
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">系统</div>
-                    <div class="nav-item" onclick="navigateTo('settings')">
+                    <div class="nav-item" onclick="navigateTo('settings', this)">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -1483,7 +1495,8 @@
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
-                                <input type="text" id="userSearchInput" placeholder="搜索用户名或邮箱..." onkeyup="searchUsers()">
+                                <label for="userSearchInput" class="sr-only">搜索用户</label>
+                                <input type="text" id="userSearchInput" name="userSearchInput" placeholder="搜索用户名或邮箱..." onkeyup="searchUsers()" aria-label="搜索用户名或邮箱">
                             </div>
                             <div class="card-actions">
                                 <button class="btn btn-primary" onclick="showAddUserModal()">
@@ -1533,7 +1546,8 @@
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
-                                <input type="text" id="monitorSearchInput" placeholder="搜索手机号或用户名..." onkeyup="searchMonitors()">
+                                <label for="monitorSearchInput" class="sr-only">搜索监控</label>
+                                <input type="text" id="monitorSearchInput" name="monitorSearchInput" placeholder="搜索手机号或用户名..." onkeyup="searchMonitors()" aria-label="搜索手机号或用户名">
                             </div>
                             <div class="card-actions">
                                 <button class="btn btn-danger" onclick="clearAllMonitors()">清除所有监控</button>
@@ -1574,15 +1588,27 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">手机号列表</h3>
+                            <h3 class="card-title">功能说明</h3>
                         </div>
                         <div class="card-body">
-                            <div class="form-group">
-                                <textarea class="form-textarea" id="batchPhoneList" rows="12" placeholder="每行一个手机号，格式：手机号|API URL&#10;例如：&#10;13800138001|https://api.example.com/phone1&#10;13800138002|https://api.example.com/phone2&#10;13800138003|https://api.example.com/phone3"></textarea>
-                                <div class="form-hint">每行输入一个手机号和API URL，用 | 分隔。如果只输入手机号，将使用默认API。</div>
+                            <div class="alert alert-info" style="background: #e3f2fd; border: 1px solid #2196F3; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div style="font-size: 32px;">ℹ️</div>
+                                    <div>
+                                        <h4 style="margin: 0 0 10px 0; color: #1976d2;">管理员权限说明</h4>
+                                        <p style="margin: 0; color: #555; line-height: 1.6;">
+                                            管理员账号只能<strong>查看和管理</strong>所有用户的手机号和验证码，<br>
+                                            不能添加新的手机号。<br><br>
+                                            如需添加手机号，请使用<strong>普通用户账号</strong>登录后操作。
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                            <button class="btn btn-primary" onclick="batchAddPhones()">开始导入</button>
-                            <div id="batchPhoneResult"></div>
+                            <div style="text-align: center; padding: 40px; background: #f5f5f5; border-radius: 8px;">
+                                <div style="font-size: 48px; margin-bottom: 15px;">👤</div>
+                                <h3 style="margin: 0 0 10px 0; color: #333;">普通用户功能</h3>
+                                <p style="margin: 0; color: #666;">添加手机号功能仅对普通用户开放</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1600,16 +1626,16 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group">
-                                <label class="form-label">系统名称</label>
-                                <input type="text" class="form-input" id="settingSystemName" value="多用户动态验证码监控系统">
+                                <label class="form-label" for="settingSystemName">系统名称</label>
+                                <input type="text" class="form-input" id="settingSystemName" name="settingSystemName" value="多用户动态验证码监控系统">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">默认刷新间隔（秒）</label>
-                                <input type="number" class="form-input" id="settingRefreshInterval" value="5" min="1" max="60">
+                                <label class="form-label" for="settingRefreshInterval">默认刷新间隔（秒）</label>
+                                <input type="number" class="form-input" id="settingRefreshInterval" name="settingRefreshInterval" value="5" min="1" max="60">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">验证码保留时间（小时）</label>
-                                <input type="number" class="form-input" id="settingRetentionHours" value="24" min="1" max="168">
+                                <label class="form-label" for="settingRetentionHours">验证码保留时间（小时）</label>
+                                <input type="number" class="form-input" id="settingRetentionHours" name="settingRetentionHours" value="24" min="1" max="168">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">
@@ -1677,29 +1703,31 @@
                     </svg>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">用户名</label>
-                    <input type="text" class="form-input" id="newUsername" placeholder="请输入用户名">
+            <form id="addUserForm" onsubmit="event.preventDefault(); addUser();">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="newUsername">用户名</label>
+                        <input type="text" class="form-input" id="newUsername" name="newUsername" placeholder="请输入用户名" autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="newEmail">邮箱</label>
+                        <input type="email" class="form-input" id="newEmail" name="newEmail" placeholder="请输入邮箱" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="newPassword">密码</label>
+                        <input type="password" class="form-input" id="newPassword" name="newPassword" placeholder="请输入密码" autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="newUserIsAdmin"> 设为管理员
+                        </label>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">邮箱</label>
-                    <input type="email" class="form-input" id="newEmail" placeholder="请输入邮箱">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddUserModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">添加</button>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">密码</label>
-                    <input type="password" class="form-input" id="newPassword" placeholder="请输入密码">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">
-                        <input type="checkbox" id="newUserIsAdmin"> 设为管理员
-                    </label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeAddUserModal()">取消</button>
-                <button class="btn btn-primary" onclick="addUser()">添加</button>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -1714,35 +1742,37 @@
                     </svg>
                 </button>
             </div>
-            <div class="modal-body">
-                <input type="hidden" id="editUserId">
-                <div class="form-group">
-                    <label class="form-label">用户名</label>
-                    <input type="text" class="form-input" id="editUsername" placeholder="请输入用户名">
+            <form id="editUserForm" onsubmit="event.preventDefault(); updateUser();">
+                <div class="modal-body">
+                    <input type="hidden" id="editUserId">
+                    <div class="form-group">
+                        <label class="form-label" for="editUsername">用户名</label>
+                        <input type="text" class="form-input" id="editUsername" name="editUsername" placeholder="请输入用户名" autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editEmail">邮箱</label>
+                        <input type="email" class="form-input" id="editEmail" name="editEmail" placeholder="请输入邮箱" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editPassword">新密码（留空则不修改）</label>
+                        <input type="password" class="form-input" id="editPassword" name="editPassword" placeholder="请输入新密码" autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="editUserIsAdmin"> 管理员权限
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="editUserIsActive" checked> 账户启用
+                        </label>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">邮箱</label>
-                    <input type="email" class="form-input" id="editEmail" placeholder="请输入邮箱">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditUserModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">新密码（留空则不修改）</label>
-                    <input type="password" class="form-input" id="editPassword" placeholder="请输入新密码">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">
-                        <input type="checkbox" id="editUserIsAdmin"> 管理员权限
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">
-                        <input type="checkbox" id="editUserIsActive" checked> 账户启用
-                    </label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeEditUserModal()">取消</button>
-                <button class="btn btn-primary" onclick="updateUser()">保存</button>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -1760,7 +1790,8 @@
             if (token) {
                 showApp();
             } else {
-                showLogin();
+                // 没有token，跳转到统一登录页面
+                window.location.href = 'login.html';
             }
         });
 
@@ -1828,14 +1859,16 @@
         }
 
         // 导航
-        function navigateTo(page) {
+        function navigateTo(page, clickedElement) {
             currentPage = page;
 
             // 更新导航状态
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.currentTarget.classList.add('active');
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            }
 
             // 隐藏所有页面
             document.querySelectorAll('.page-content').forEach(content => {
@@ -1925,6 +1958,19 @@
             }, 5000);
         }
 
+        // 处理API响应，统一处理401错误
+        async function handleApiResponse(response) {
+            if (response.status === 401) {
+                showToast('error', '登录过期', '您的登录已过期，请重新登录');
+                localStorage.removeItem('admin_token');
+                setTimeout(() => {
+                    showLogin();
+                }, 2000);
+                return null;
+            }
+            return response;
+        }
+
         // 加载仪表盘统计
         async function loadDashboardStats() {
             try {
@@ -1984,9 +2030,13 @@
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
-                if (!response.ok) throw new Error('加载失败');
+                const checkedResponse = await handleApiResponse(response);
+                if (!checkedResponse) {
+                    hideLoading();
+                    return;
+                }
 
-                const data = await response.json();
+                const data = await checkedResponse.json();
                 if (data.success) {
                     usersData = data.data.list || [];
                     renderUsersTable(usersData);
@@ -2095,7 +2145,13 @@
                     body: JSON.stringify({ username, email, password, is_admin: isAdmin })
                 });
 
-                const data = await response.json();
+                const checkedResponse = await handleApiResponse(response);
+                if (!checkedResponse) {
+                    hideLoading();
+                    return;
+                }
+
+                const data = await checkedResponse.json();
                 if (data.success) {
                     showToast('success', '成功', '用户添加成功');
                     closeAddUserModal();
@@ -2159,7 +2215,13 @@
                     body: JSON.stringify(body)
                 });
 
-                const data = await response.json();
+                const checkedResponse = await handleApiResponse(response);
+                if (!checkedResponse) {
+                    hideLoading();
+                    return;
+                }
+
+                const data = await checkedResponse.json();
                 if (data.success) {
                     showToast('success', '成功', '用户更新成功');
                     closeEditUserModal();
@@ -2261,6 +2323,24 @@
             }
         }
 
+        // 获取状态徽章HTML
+        function getStatusBadge(status) {
+            const statusMap = {
+                'active': { text: '正常', class: 'badge-success' },
+                'success': { text: '有验证码', class: 'badge-success' },
+                'error': { text: '请求错误', class: 'badge-danger' },
+                'no-code': { text: '无验证码', class: 'badge-warning' },
+                'loading': { text: '加载中', class: 'badge-info' }
+            };
+            
+            const config = statusMap[status] || { text: '停止', class: 'badge-secondary' };
+            
+            return `<span class="badge ${config.class}">
+                <span class="badge-dot"></span>
+                ${config.text}
+            </span>`;
+        }
+
         // 加载监控列表
         async function loadMonitors(page = 1) {
             showLoading();
@@ -2313,10 +2393,7 @@
                     <td>${m.phone}</td>
                     <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${m.url || '-'}</td>
                     <td>
-                        <span class="badge ${m.status === 'active' ? 'badge-success' : 'badge-warning'}">
-                            <span class="badge-dot"></span>
-                            ${m.status === 'active' ? '正常' : '停止'}
-                        </span>
+                        ${getStatusBadge(m.status)}
                     </td>
                     <td>${m.updated_at || '-'}</td>
                     <td>

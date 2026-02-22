@@ -58,9 +58,9 @@ function verifyAdmin($jwt, $userModel, $response) {
             return false;
         }
 
-        // 检查用户角色
+        // 检查用户角色（使用 is_admin 字段）
         $user = $userModel->getUserById($payload['user_id']);
-        if (!$user || $user['role'] !== 'admin') {
+        if (!$user || empty($user['is_admin'])) {
             $response->error('无管理员权限', 403);
             return false;
         }

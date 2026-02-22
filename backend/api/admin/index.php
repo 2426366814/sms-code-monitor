@@ -84,7 +84,7 @@ if ($method === 'DELETE' && $action === 'delete-user') {
 } elseif ($method === 'POST' && $action === 'update-user') {
     $payload = verifyAdmin($jwt);
     if (!$payload) return;
-    updateUser($database);
+    updateUser($database, $payload);
 } elseif ($method === 'POST' && $action === 'add-user') {
     $payload = verifyAdmin($jwt);
     if (!$payload) return;
@@ -125,6 +125,12 @@ if ($method === 'DELETE' && $action === 'delete-user') {
             $payload = verifyAdmin($jwt);
             if (!$payload) return;
             getMonitors($database);
+            break;
+        
+        case 'system-info':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            getSystemInfo($database);
             break;
         
         default:
@@ -376,7 +382,7 @@ function toggleUserStatus($database) {
 /**
  * 更新用户信息
  */
-function updateUser($database) {
+function updateUser($database, $currentUser) {
     try {
         $userId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         $data = json_decode(file_get_contents('php://input'), true);
@@ -387,9 +393,15 @@ function updateUser($database) {
         }
         
         // 检查用户是否存在
-        $user = $database->fetchOne("SELECT id FROM users WHERE id = ?", [$userId]);
+        $user = $database->fetchOne("SELECT id, is_admin FROM users WHERE id = ?", [$userId]);
         if (!$user) {
             Response::error('用户不存在', 404);
+            return;
+        }
+        
+        // 防止取消自己的管理员权限
+        if ($userId == $currentUser['user_id'] && isset($data['is_admin']) && !$data['is_admin']) {
+            Response::error('不能取消自己的管理员权限', 403);
             return;
         }
         
@@ -537,6 +549,25 @@ function addUser($database) {
         }
     } catch (Exception $e) {
         Response::error('添加用户失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 获取系统信息
+ */
+function getSystemInfo($database) {
+    try {
+        $info = [
+            'php_version' => PHP_VERSION,
+            'server_time' => date('Y-m-d H:i:s'),
+            'server_timezone' => date_default_timezone_get(),
+            'database_type' => 'MySQL',
+            'system_version' => 'v2.0.0'
+        ];
+        
+        Response::success($info, '获取成功');
+    } catch (Exception $e) {
+        Response::error('获取系统信息失败: ' . $e->getMessage(), 500);
     }
 }
 ?>

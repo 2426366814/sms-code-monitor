@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登录 - 多用户动态验证码监控系统</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
         * {
             margin: 0;
@@ -162,12 +163,12 @@
         <form id="loginForm">
             <div class="form-group">
                 <label for="username">用户名/邮箱</label>
-                <input type="text" id="username" name="username" placeholder="请输入用户名或邮箱" required>
+                <input type="text" id="username" name="username" placeholder="请输入用户名或邮箱" autocomplete="username" required>
             </div>
             
             <div class="form-group password">
                 <label for="password">密码</label>
-                <input type="password" id="password" name="password" placeholder="请输入密码" required>
+                <input type="password" id="password" name="password" placeholder="请输入密码" autocomplete="current-password" required>
                 <span class="toggle-password" onclick="togglePassword()">👁️</span>
             </div>
             
@@ -224,29 +225,30 @@
             .then(response => response.json())
             .then(data => {
                 loading.style.display = 'none';
-                
-                if (data.success) {
-                    // 检查是否为管理员
-                    if (data.data.user && data.data.user.is_admin) {
-                        loading.style.display = 'none';
-                        errorMessage.textContent = '管理员请使用管理员面板登录';
-                        errorMessage.style.display = 'block';
-                        return;
-                    }
-                    
+
+                if (data.success && data.data && data.data.user) {
                     // 保存token到本地存储
                     localStorage.setItem('token', data.data.token);
                     localStorage.setItem('user', JSON.stringify(data.data.user));
-                    
-                    successMessage.textContent = data.message;
+
+                    // 如果是管理员，同时保存admin_token
+                    if (data.data.user.is_admin) {
+                        localStorage.setItem('admin_token', data.data.token);
+                    }
+
+                    successMessage.textContent = data.message || '登录成功';
                     successMessage.style.display = 'block';
-                    
-                    // 跳转到首页
+
+                    // 根据用户权限跳转到不同页面
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        if (data.data.user.is_admin) {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'index.html';
+                        }
                     }, 1000);
                 } else {
-                    errorMessage.textContent = data.message;
+                    errorMessage.textContent = data.message || '登录失败';
                     errorMessage.style.display = 'block';
                 }
             })
