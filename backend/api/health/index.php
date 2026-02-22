@@ -24,6 +24,13 @@ $type = isset($_GET['type']) ? $_GET['type'] : 'all';
 // 初始化响应对象
 $response = new Response();
 
+// 如果是修复请求
+if ($type === 'fix') {
+    $fixResult = performFix();
+    $response->success($fixResult);
+    exit;
+}
+
 // 检测结果
 $result = [];
 
@@ -213,5 +220,52 @@ function convertToBytes($val) {
             $val *= 1024;
     }
     return $val;
+}
+
+/**
+ * 执行系统修复
+ * @return array 修复结果
+ */
+function performFix() {
+    $result = [
+        'actions' => [],
+        'status' => 'ok'
+    ];
+    
+    // 获取网站根目录
+    $webRoot = dirname(__DIR__, 3); // health -> api -> backend -> root
+    
+    // 1. 删除错误的 index.php
+    $indexPhpPath = $webRoot . '/index.php';
+    if (file_exists($indexPhpPath)) {
+        $content = @file_get_contents($indexPhpPath);
+        if ($content && strpos($content, 'require_once') !== false && strpos($content, 'config.php') !== false) {
+            if (@unlink($indexPhpPath)) {
+                $result['actions'][] = '✅ 已删除错误的 index.php';
+            } else {
+                $result['actions'][] = '❌ 无法删除 index.php (权限不足)';
+                $result['status'] = 'error';
+            }
+        } else {
+            $result['actions'][] = 'index.php 存在但可能是有效文件';
+        }
+    } else {
+        $result['actions'][] = '✅ index.php 不存在';
+    }
+    
+    // 2. 创建 .htaccess
+    $htaccessPath = $webRoot . '/.htaccess';
+    if (!file_exists($htaccessPath)) {
+        @file_put_contents($htaccessPath, "DirectoryIndex index.html index.php\n");
+        $result['actions'][] = '✅ 已创建 .htaccess';
+    } else {
+        $result['actions'][] = '.htaccess 已存在';
+    }
+    
+    // 3. 验证 index.html
+    $indexHtmlPath = $webRoot . '/index.html';
+    $result['index_html_exists'] = file_exists($indexHtmlPath);
+    
+    return $result;
 }
 ?>
