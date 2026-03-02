@@ -8,7 +8,7 @@ require_once __DIR__ . '/BaseModel.php';
 require_once __DIR__ . '/../utils/Database.php';
 
 class CodeModel extends BaseModel {
-    protected $table = 'codes';
+    protected $table = 'verification_codes';
     
     /**
      * 根据用户ID获取验证码列表

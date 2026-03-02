@@ -183,13 +183,14 @@ function checkProjectFunctions() {
     $requiredDirs = [
         '../../api',
         '../../api/admin',
-        '../../api/api_keys',
+        '../../api/apikeys',
         '../../api/auth',
         '../../api/codes',
         '../../api/health',
         '../../api/monitors',
-        '../../api/settings',
-        '../../api/public'
+        '../../api/statistics',
+        '../../api/webhooks',
+        '../../api/external'
     ];
 
     foreach ($requiredDirs as $dir) {

@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="多用户动态验证码监控系统 - 实时监控、自动刷新、一键复制、多主题支持">
+    <meta name="keywords" content="验证码,短信验证码,监控,接码,动态验证码">
+    <meta name="author" content="Multi-User SMS Monitor">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="多用户动态验证码监控系统">
+    <meta property="og:description" content="实时监控、自动刷新、一键复制、多主题支持">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
     <title>用户中心 - 多用户动态验证码监控系统</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="canonical" href="https://jm.91wz.org/">
     <style>
         /* Screen reader only - for accessibility */
         .sr-only {
@@ -19,33 +28,162 @@
             border: 0;
         }
         
-        /* CSS Variables for theming */
-        :root {
-            --primary: #4CAF50;
-            --primary-dark: #45a049;
-            --primary-light: #e8f5e9;
-            --secondary: #2196F3;
-            --danger: #f44336;
-            --warning: #ff9800;
-            --info: #00bcd4;
-            --success: #4CAF50;
-            --bg-primary: #f5f7fa;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #f8f9fa;
-            --text-primary: #2c3e50;
-            --text-secondary: #5a6c7d;
-            --text-muted: #8b9dc3;
-            --border-color: #e1e8ed;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 16px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --sidebar-width: 260px;
-            --header-height: 64px;
+        /* CSS Variables for theming - Multi-Theme System */
+        
+        /* 主题1: 暗黑护眼 (默认) */
+        :root,
+        [data-theme="dark-eye-care"] {
+            --primary: #4ade80;
+            --primary-dark: #22c55e;
+            --primary-light: rgba(74, 222, 128, 0.15);
+            --primary-gradient: linear-gradient(135deg, #4ade80 0%, #2dd4bf 50%, #22d3ee 100%);
+            --secondary: #38bdf8;
+            --danger: #f87171;
+            --warning: #fbbf24;
+            --info: #22d3ee;
+            --success: #4ade80;
+            --bg-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            --bg-secondary: rgba(30, 41, 59, 0.9);
+            --bg-tertiary: rgba(30, 41, 59, 0.6);
+            --bg-glass: rgba(30, 41, 59, 0.7);
+            --bg-glass-dark: rgba(15, 23, 42, 0.8);
+            --bg-glass-card: rgba(30, 41, 59, 0.85);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(71, 85, 105, 0.5);
+            --border-glass: rgba(71, 85, 105, 0.4);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.4);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.5);
+            --shadow-xl: 0 24px 64px rgba(0,0,0,0.6);
+            --shadow-glow: 0 0 40px rgba(74, 222, 128, 0.2);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --theme-name: '暗黑护眼';
         }
+        
+        /* 主题2: 简约灰蓝 */
+        [data-theme="gray-blue"] {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: rgba(59, 130, 246, 0.15);
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            --secondary: #6366f1;
+            --bg-primary: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.95);
+            --bg-tertiary: rgba(241, 245, 249, 0.8);
+            --bg-glass: rgba(255, 255, 255, 0.8);
+            --bg-glass-dark: rgba(241, 245, 249, 0.9);
+            --bg-glass-card: rgba(255, 255, 255, 0.9);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border-color: rgba(203, 213, 225, 0.8);
+            --border-glass: rgba(203, 213, 225, 0.6);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.08);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.1);
+            --shadow-glow: 0 0 40px rgba(59, 130, 246, 0.2);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --theme-name: '简约灰蓝';
+        }
+        
+        /* 主题3: 暖色调护眼 */
+        [data-theme="warm-eye-care"] {
+            --primary: #f59e0b;
+            --primary-dark: #d97706;
+            --primary-light: rgba(245, 158, 11, 0.15);
+            --primary-gradient: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            --secondary: #ef4444;
+            --bg-primary: linear-gradient(135deg, #fef3c7 0%, #fed7aa 50%, #fef3c7 100%);
+            --bg-secondary: rgba(255, 251, 235, 0.95);
+            --bg-tertiary: rgba(254, 243, 199, 0.8);
+            --bg-glass: rgba(255, 251, 235, 0.8);
+            --bg-glass-dark: rgba(254, 243, 199, 0.9);
+            --bg-glass-card: rgba(255, 251, 235, 0.9);
+            --text-primary: #78350f;
+            --text-secondary: #92400e;
+            --text-muted: #a16207;
+            --border-color: rgba(251, 191, 36, 0.4);
+            --border-glass: rgba(251, 191, 36, 0.3);
+            --shadow-sm: 0 2px 8px rgba(120, 53, 15, 0.08);
+            --shadow-md: 0 8px 32px rgba(120, 53, 15, 0.1);
+            --shadow-lg: 0 16px 48px rgba(120, 53, 15, 0.12);
+            --shadow-glow: 0 0 40px rgba(245, 158, 11, 0.2);
+            --shadow-glass: 0 8px 32px rgba(120, 53, 15, 0.08);
+            --theme-name: '暖色调护眼';
+        }
+        
+        /* 主题4: 经典黑白 */
+        [data-theme="classic-black-white"] {
+            --primary: #18181b;
+            --primary-dark: #09090b;
+            --primary-light: rgba(24, 24, 27, 0.1);
+            --primary-gradient: linear-gradient(135deg, #27272a 0%, #3f3f46 100%);
+            --secondary: #3f3f46;
+            --bg-primary: linear-gradient(135deg, #ffffff 0%, #f4f4f5 50%, #ffffff 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.98);
+            --bg-tertiary: rgba(244, 244, 245, 0.9);
+            --bg-glass: rgba(255, 255, 255, 0.9);
+            --bg-glass-dark: rgba(244, 244, 245, 0.95);
+            --bg-glass-card: rgba(255, 255, 255, 0.95);
+            --text-primary: #18181b;
+            --text-secondary: #3f3f46;
+            --text-muted: #71717a;
+            --border-color: rgba(63, 63, 70, 0.3);
+            --border-glass: rgba(63, 63, 70, 0.2);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.08);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.1);
+            --shadow-glow: 0 0 40px rgba(24, 24, 27, 0.1);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.06);
+            --theme-name: '经典黑白';
+        }
+        
+        /* 主题5: 紫色梦幻 */
+        [data-theme="purple-dream"] {
+            --primary: #a855f7;
+            --primary-dark: #9333ea;
+            --primary-light: rgba(168, 85, 247, 0.15);
+            --primary-gradient: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            --secondary: #ec4899;
+            --bg-primary: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+            --bg-secondary: rgba(49, 46, 129, 0.9);
+            --bg-tertiary: rgba(49, 46, 129, 0.6);
+            --bg-glass: rgba(49, 46, 129, 0.7);
+            --bg-glass-dark: rgba(30, 27, 75, 0.8);
+            --bg-glass-card: rgba(49, 46, 129, 0.85);
+            --text-primary: #f5f3ff;
+            --text-secondary: #c4b5fd;
+            --text-muted: #a78bfa;
+            --border-color: rgba(139, 92, 246, 0.4);
+            --border-glass: rgba(139, 92, 246, 0.3);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.4);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.5);
+            --shadow-glow: 0 0 40px rgba(168, 85, 247, 0.3);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --theme-name: '紫色梦幻';
+         }
+         
+         /* 通用变量 - 所有主题共享 */
+         :root {
+             --danger: #f87171;
+             --warning: #fbbf24;
+             --info: #22d3ee;
+             --success: #4ade80;
+             --radius-sm: 12px;
+             --radius-md: 16px;
+             --radius-lg: 24px;
+             --radius-xl: 32px;
+             --blur-glass: blur(20px);
+             --blur-light: blur(12px);
+             --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+             --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+             --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+             --sidebar-width: 300px;
+             --header-height: 80px;
+         }
 
         * {
             margin: 0;
@@ -55,43 +193,102 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-primary);
+            background: var(--bg-primary);
+            background-attachment: fixed;
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(74, 222, 128, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(34, 211, 238, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(45, 212, 191, 0.03) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         /* Layout */
         .app-container {
             display: flex;
             min-height: 100vh;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Sidebar */
+        /* Sidebar - Glassmorphism */
         .sidebar {
             width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-glass);
+            -webkit-backdrop-filter: var(--blur-glass);
+            border-right: 1px solid var(--border-glass);
             display: flex;
             flex-direction: column;
             position: fixed;
             height: 100vh;
             z-index: 100;
             transition: var(--transition);
+            box-shadow: var(--shadow-glass);
         }
 
         .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
+            padding: 28px;
+            border-bottom: 1px solid var(--border-glass);
+            background: var(--bg-glass-dark);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .sidebar-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
         }
 
         .sidebar-header h1 {
             font-size: 18px;
-            font-weight: 600;
-            color: var(--primary);
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+        }
+
+        .sidebar-header h1 svg {
+            filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.4));
+            stroke: url(#gradient);
         }
 
         .sidebar-nav {
@@ -118,24 +315,64 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 12px;
-            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
             cursor: pointer;
             transition: var(--transition);
             color: var(--text-secondary);
             font-size: 14px;
-            margin-bottom: 2px;
+            margin-bottom: 6px;
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--primary-gradient);
+            transform: scaleY(0);
+            transition: var(--transition);
+            border-radius: 0 3px 3px 0;
+        }
+        
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--primary-gradient);
+            opacity: 0;
+            transition: var(--transition);
+            border-radius: var(--radius-md);
         }
 
         .nav-item:hover {
-            background: var(--bg-tertiary);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
             color: var(--text-primary);
+            transform: translateX(6px);
+            border-color: var(--border-glass);
+            box-shadow: var(--shadow-sm);
         }
 
         .nav-item.active {
-            background: var(--primary-light);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
             color: var(--primary);
-            font-weight: 500;
+            font-weight: 600;
+            border-color: var(--border-glass);
+            box-shadow: var(--shadow-sm), inset 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-item.active::before {
+            transform: scaleY(1);
         }
 
         .nav-item svg {
@@ -145,30 +382,111 @@
         }
 
         .sidebar-footer {
-            padding: 16px;
-            border-top: 1px solid var(--border-color);
+            padding: 20px;
+            border-top: 1px solid var(--border-glass);
+            background: var(--bg-glass-dark);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+        }
+
+        /* Theme Switcher */
+        .theme-switcher {
+            margin-bottom: 16px;
+        }
+
+        .theme-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .theme-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .theme-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 2px;
+            background: var(--bg-glass);
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        .theme-btn.active {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .theme-preview {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 6px;
+            border: 2px solid;
+            transition: var(--transition);
         }
 
         .user-card {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: var(--bg-tertiary);
+            gap: 14px;
+            padding: 16px;
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
             border-radius: var(--radius-md);
+            transition: var(--transition);
+            border: 1px solid var(--border-glass);
+        }
+
+        .user-card:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: scale(1.02);
+            box-shadow: var(--shadow-sm);
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: var(--primary-gradient);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 16px;
+            box-shadow: var(--shadow-glow);
+            position: relative;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: var(--shadow-glow); }
+            50% { box-shadow: 0 0 30px rgba(74, 222, 128, 0.4); }
+        }
+
+        .user-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 2px solid var(--bg-secondary);
         }
 
         .user-info {
@@ -198,18 +516,21 @@
             flex-direction: column;
         }
 
-        /* Header */
+        /* Header - Glassmorphism */
         .header {
             height: var(--header-height);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-glass);
+            -webkit-backdrop-filter: var(--blur-glass);
+            border-bottom: 1px solid var(--border-glass);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 28px;
             position: sticky;
             top: 0;
             z-index: 50;
+            box-shadow: var(--shadow-sm);
         }
 
         .header-left {
@@ -256,92 +577,226 @@
             overflow-y: auto;
         }
 
-        /* Stats Cards */
+        /* Dashboard Tabs */
+        .dashboard-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 4px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .tab-btn svg {
+            flex-shrink: 0;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Stats Cards - Glassmorphism */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 24px;
+            gap: 24px;
+            margin-bottom: 28px;
         }
 
         .stat-card {
-            background: var(--bg-secondary);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            box-shadow: var(--shadow-sm);
+            background: var(--bg-glass-card);
+            backdrop-filter: var(--blur-glass);
+            -webkit-backdrop-filter: var(--blur-glass);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-glass);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-glass);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            pointer-events: none;
+            opacity: 0;
             transition: var(--transition);
         }
 
         .stat-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            transform: translateY(-6px) scale(1.02);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+        
+        .stat-card:hover::after {
+            opacity: 1;
         }
 
         .stat-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         .stat-label {
             font-size: 13px;
+            font-weight: 500;
             color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .stat-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-sm);
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: var(--transition);
         }
 
-        .stat-icon.success { background: var(--primary-light); color: var(--primary); }
-        .stat-icon.warning { background: #fff3e0; color: var(--warning); }
-        .stat-icon.info { background: #e3f2fd; color: var(--secondary); }
-        .stat-icon.danger { background: #ffebee; color: var(--danger); }
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .stat-icon.success { background: linear-gradient(135deg, #10b981 0%, #34d399 100%); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .stat-icon.warning { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); color: white; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+        .stat-icon.info { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        .stat-icon.danger { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
 
         .stat-value {
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 32px;
+            font-weight: 800;
             color: var(--text-primary);
             margin-bottom: 4px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-change {
             font-size: 12px;
             color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .stat-change.positive { color: var(--success); }
         .stat-change.negative { color: var(--danger); }
 
-        /* Cards */
+        /* Cards - Glassmorphism */
         .card {
-            background: var(--bg-secondary);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 24px;
+            background: var(--bg-glass-card);
+            backdrop-filter: var(--blur-glass);
+            -webkit-backdrop-filter: var(--blur-glass);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-glass);
+            margin-bottom: 28px;
             overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid var(--border-glass);
+            position: relative;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            border-color: rgba(99, 102, 241, 0.2);
         }
 
         .card-header {
-            padding: 20px 20px 0;
+            padding: 24px 24px 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         .card-title {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
         }
 
         .card-body {
-            padding: 20px;
+            padding: 24px;
         }
 
         /* Toolbar */
@@ -391,59 +846,98 @@
             height: 18px;
         }
 
-        /* Buttons */
+        /* Buttons - Glassmorphism */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 10px 16px;
+            padding: 14px 24px;
             border: none;
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: var(--primary-gradient);
             color: white;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
         }
-
+        
         .btn-secondary {
-            background: var(--bg-tertiary);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
             color: var(--text-primary);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-glass);
         }
 
         .btn-secondary:hover {
-            background: var(--border-color);
+            background: rgba(255, 255, 255, 0.4);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
 
         .btn-danger {
-            background: var(--danger);
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
             color: white;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .btn-danger:hover {
-            background: #d32f2f;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
         }
 
         .btn-success {
-            background: var(--success);
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
             color: white;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
         }
 
         .btn-sm {
-            padding: 6px 12px;
+            padding: 8px 14px;
             font-size: 13px;
         }
 
@@ -493,37 +987,60 @@
         /* Table */
         .table-container {
             overflow-x: auto;
+            border-radius: var(--radius-md);
         }
 
         .data-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
         .data-table th {
             text-align: left;
-            padding: 12px 16px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 14px 20px;
+            font-size: 11px;
+            font-weight: 700;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--bg-tertiary);
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--border-color);
+            background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+        }
+
+        .data-table th:first-child {
+            border-radius: var(--radius-md) 0 0 0;
+        }
+
+        .data-table th:last-child {
+            border-radius: 0 var(--radius-md) 0 0;
         }
 
         .data-table td {
-            padding: 16px;
+            padding: 18px 20px;
             border-bottom: 1px solid var(--border-color);
             font-size: 14px;
+            transition: var(--transition-fast);
         }
 
-        .data-table tr:hover td {
-            background: var(--bg-tertiary);
+        .data-table tbody tr {
+            transition: var(--transition);
+        }
+
+        .data-table tbody tr:hover td {
+            background: linear-gradient(90deg, var(--primary-light) 0%, transparent 100%);
         }
 
         .data-table tr:last-child td {
             border-bottom: none;
+        }
+
+        .data-table tr:last-child td:first-child {
+            border-radius: 0 0 0 var(--radius-md);
+        }
+
+        .data-table tr:last-child td:last-child {
+            border-radius: 0 0 var(--radius-md) 0;
         }
 
         /* Status Badge */
@@ -531,10 +1048,11 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
+            letter-spacing: 0.3px;
         }
 
         .badge::before {
@@ -542,77 +1060,101 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         .badge-success {
-            background: var(--primary-light);
-            color: var(--primary);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(52, 211, 153, 0.15) 100%);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
-        .badge-success::before { background: var(--primary); }
+        .badge-success::before { background: var(--success); }
 
         .badge-warning {
-            background: #fff3e0;
-            color: #e65100;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(251, 191, 36, 0.15) 100%);
+            color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
         .badge-warning::before { background: var(--warning); }
 
         .badge-error {
-            background: #ffebee;
-            color: #c62828;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(248, 113, 113, 0.15) 100%);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
         .badge-error::before { background: var(--danger); }
 
         .badge-info {
-            background: #e3f2fd;
-            color: #1565c0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(96, 165, 250, 0.15) 100%);
+            color: #2563eb;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
         .badge-info::before { background: var(--secondary); }
 
-        /* Code Display */
+        /* Code Display - Glassmorphism */
         .code-display {
-            font-family: 'SF Mono', Monaco, monospace;
-            font-size: 16px;
-            font-weight: 600;
+            font-family: 'SF Mono', 'Fira Code', Monaco, monospace;
+            font-size: 20px;
+            font-weight: 700;
             color: var(--primary);
-            background: var(--primary-light);
-            padding: 8px 36px 8px 16px;
-            border-radius: var(--radius-sm);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            padding: 12px 48px 12px 18px;
+            border-radius: var(--radius-md);
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
             position: relative;
             cursor: pointer;
             transition: var(--transition);
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-sm);
         }
 
         .code-display:hover {
-            background: #d4edda;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: var(--shadow-md), var(--shadow-glow);
+            border-color: rgba(99, 102, 241, 0.3);
         }
 
         .code-display.empty {
             color: var(--text-muted);
-            background: var(--bg-tertiary);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
             cursor: default;
+            border: 1px dashed var(--border-glass);
+            letter-spacing: normal;
         }
 
         .code-display.empty:hover {
-            background: var(--bg-tertiary);
+            transform: none;
+            box-shadow: var(--shadow-sm);
         }
 
         .code-display .copy-btn {
             position: absolute;
-            right: 4px;
+            right: 8px;
             top: 50%;
             transform: translateY(-50%);
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border: none;
-            background: transparent;
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
             border-radius: var(--radius-sm);
             cursor: pointer;
             display: flex;
@@ -621,6 +1163,7 @@
             color: var(--primary);
             opacity: 0;
             transition: var(--transition);
+            border: 1px solid var(--border-glass);
         }
 
         .code-display:hover .copy-btn {
@@ -628,17 +1171,27 @@
         }
 
         .code-display .copy-btn:hover {
-            background: rgba(76, 175, 80, 0.2);
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: var(--shadow-glow);
         }
 
         .code-display.copied {
-            background: var(--success);
-            color: white;
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .code-display.copied {
+            -webkit-text-fill-color: white;
         }
 
         .code-display.copied .copy-btn {
             color: white;
             opacity: 1;
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
         }
 
         /* Phone Display */
@@ -686,50 +1239,71 @@
             color: var(--danger);
         }
 
-        /* History Grid */
+        /* History Grid - Glassmorphism */
         .history-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
         }
 
         .history-card {
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            border-left: 4px solid var(--primary);
+            background: var(--bg-glass-card);
+            backdrop-filter: var(--blur-glass);
+            -webkit-backdrop-filter: var(--blur-glass);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            border-left: 4px solid transparent;
+            border-image: var(--primary-gradient) 1;
             transition: var(--transition);
+            border: 1px solid var(--border-glass);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .history-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
         }
 
         .history-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            border-color: rgba(99, 102, 241, 0.3);
         }
 
         .history-card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .history-phone {
             font-weight: 600;
             color: var(--text-primary);
+            font-size: 15px;
         }
 
         .history-time {
             font-size: 12px;
             color: var(--text-muted);
+            background: var(--bg-glass);
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
         }
 
         .history-code {
             font-family: 'SF Mono', Monaco, monospace;
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 700;
             color: var(--primary);
-            letter-spacing: 3px;
-            margin: 12px 0;
+            letter-spacing: 4px;
+            margin: 14px 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -738,9 +1312,13 @@
 
         .history-code-text {
             cursor: pointer;
-            padding: 4px 12px;
-            border-radius: var(--radius-sm);
+            padding: 6px 14px;
+            border-radius: var(--radius-md);
             transition: var(--transition);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            border: 1px solid var(--border-glass);
         }
 
         .history-code-text:hover {
@@ -799,14 +1377,16 @@
             margin-bottom: 20px;
         }
 
-        /* Modal */
+        /* Modal - Glassmorphism */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -822,38 +1402,62 @@
         }
 
         .modal {
-            background: var(--bg-secondary);
-            border-radius: var(--radius-lg);
+            background: var(--bg-glass-card);
+            backdrop-filter: var(--blur-glass);
+            -webkit-backdrop-filter: var(--blur-glass);
+            border-radius: var(--radius-xl);
             width: 90%;
             max-width: 520px;
             max-height: 90vh;
             overflow: hidden;
-            transform: scale(0.95);
-            transition: var(--transition);
+            transform: scale(0.9) translateY(20px);
+            transition: var(--transition-bounce);
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-xl);
+            position: relative;
+        }
+        
+        .modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
         }
 
         .modal-overlay.active .modal {
-            transform: scale(1);
+            transform: scale(1) translateY(0);
         }
 
         .modal-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border-color);
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border-glass);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
         }
 
         .modal-title {
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .modal-close {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border: none;
-            background: transparent;
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
             border-radius: var(--radius-sm);
             cursor: pointer;
             display: flex;
@@ -861,47 +1465,52 @@
             justify-content: center;
             color: var(--text-muted);
             transition: var(--transition);
+            border: 1px solid var(--border-glass);
         }
 
         .modal-close:hover {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
+            background: var(--danger);
+            color: white;
+            transform: rotate(90deg);
+            border-color: transparent;
         }
 
         .modal-body {
-            padding: 24px;
+            padding: 28px;
             overflow-y: auto;
             max-height: 60vh;
         }
 
         .modal-footer {
-            padding: 16px 24px;
+            padding: 20px 28px;
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: flex-end;
             gap: 12px;
         }
 
-        /* Form Elements */
+        /* Form Elements - Glassmorphism */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .form-label {
             display: block;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .form-input, .form-select, .form-textarea {
             width: 100%;
-            padding: 10px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
             font-size: 14px;
-            background: var(--bg-secondary);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
             color: var(--text-primary);
             transition: var(--transition);
         }
@@ -909,7 +1518,12 @@
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15), var(--shadow-glow);
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: var(--text-muted);
         }
 
         .form-textarea {
@@ -921,13 +1535,13 @@
         .form-hint {
             font-size: 12px;
             color: var(--text-muted);
-            margin-top: 6px;
+            margin-top: 8px;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 20px;
         }
 
         /* Tabs */
@@ -1543,6 +2157,837 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* API Keys Page Styles */
+        .api-info-section {
+            margin-bottom: 24px;
+        }
+
+        .api-info-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .api-info-card h4 {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .api-endpoint {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            color: var(--primary);
+            background: var(--bg-tertiary);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 0;
+            flex: 1;
+            word-break: break-all;
+        }
+
+        .api-keys-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .api-key-item {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .api-key-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .api-key-value {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+            padding: 6px 10px;
+            border-radius: 4px;
+        }
+
+        .api-key-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .api-key-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .api-key-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .api-key-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .api-key-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .api-secret {
+            margin-top: 4px;
+        }
+
+        .api-key-expires {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .api-docs {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .api-doc-item h4 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .api-doc-item pre {
+            margin: 0;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 12px 16px;
+            overflow-x: auto;
+        }
+
+        .api-doc-item code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .api-doc-desc {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .api-key-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .api-key-actions {
+                justify-content: flex-end;
+            }
+        }
+
+        .platforms-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .platform-item {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .platform-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+
+        .platform-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .platform-type-badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .platform-type-badge.type1 {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .platform-type-badge.type2 {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+        }
+
+        .platform-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .platform-url code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+
+        .platform-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .platform-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .platform-types-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .platform-type-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .platform-type-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .platform-type-header h4 {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .platform-type-card p {
+            margin: 0 0 12px 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .platform-type-example {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .platform-type-example code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .btn-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-warning:hover {
+            background: rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        /* API Docs Page Styles */
+        .api-doc-section {
+            margin-bottom: 24px;
+        }
+
+        .api-doc-section h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .api-endpoint-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .api-method {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .api-method.get {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .api-method.post {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .api-code-example {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+        }
+
+        .api-endpoint-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .api-endpoint-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .api-path {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            color: #60a5fa;
+        }
+
+        .api-desc {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Platforms Grid */
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .platform-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .platform-actions {
+                justify-content: flex-end;
+            }
+
+            .platform-types-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* API Page New Design */
+        .api-hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(59, 130, 246, 0.1));
+            border-radius: 16px;
+            margin-bottom: 24px;
+        }
+
+        .api-hero-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .api-hero-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #4ade80, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .api-hero-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .api-dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .api-stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .api-stat-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--bg-glass);
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+            transition: all 0.3s ease;
+        }
+
+        .api-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .api-stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .api-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .api-stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .api-main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .api-panel {
+            background: var(--bg-glass);
+            border-radius: 16px;
+            border: 1px solid var(--border-glass);
+            overflow: hidden;
+        }
+
+        .api-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-glass);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .api-panel-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .btn-glow {
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.5);
+        }
+
+        .api-endpoint-box {
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .api-endpoint-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .api-endpoint-url {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .api-endpoint-url code {
+            flex: 1;
+            font-size: 13px;
+            color: #4ade80;
+            background: transparent;
+            padding: 0;
+        }
+
+        .btn-copy {
+            padding: 6px 12px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-copy:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .api-keys-list {
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .api-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .api-empty-icon {
+            font-size: 48px;
+            opacity: 0.5;
+            margin-bottom: 12px;
+        }
+
+        .api-empty-text {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .api-empty-hint {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .api-key-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+
+        .api-key-item:hover {
+            border-color: var(--primary);
+            background: rgba(74, 222, 128, 0.05);
+        }
+
+        .api-key-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .api-key-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .api-key-status {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .api-key-status.status-active {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .api-key-status.status-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .api-key-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .api-key-value {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            color: #60a5fa;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px 10px;
+            border-radius: 6px;
+            word-break: break-all;
+        }
+
+        .api-secret {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .api-key-date, .api-key-expires {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .api-key-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .api-doc-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .api-doc-tab {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: transparent;
+            border: 1px solid var(--border-glass);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-muted);
+        }
+
+        .api-doc-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .api-doc-content {
+            padding: 16px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .api-doc-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .api-doc-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .api-method {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .api-method-get {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .api-method-post {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .api-method-header {
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+        }
+
+        .api-method-param {
+            background: rgba(167, 139, 250, 0.2);
+            color: #a78bfa;
+        }
+
+        .api-code {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            overflow-x: auto;
+        }
+
+        .api-code code {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: pre;
+        }
+
+        .api-doc-params {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .api-param {
+            font-size: 11px;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .api-param span {
+            color: #60a5fa;
+            margin-right: 6px;
+        }
+
+        .api-response-section {
+            background: var(--bg-glass);
+            border-radius: 16px;
+            border: 1px solid var(--border-glass);
+            padding: 20px;
+        }
+
+        .api-response-section h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        .api-response-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .api-response-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .api-response-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .api-response-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .api-response-badge.success {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .api-response-badge.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        @media (max-width: 1024px) {
+            .api-main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .api-stats-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .api-response-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1576,12 +3021,65 @@
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        历史记录
+                        验证码记录
+                    </div>
+                    <div class="nav-item" onclick="navigateTo('phones', this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        手机号管理
                     </div>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">管理</div>
+                    <div class="nav-section-title">外部平台</div>
+                    <div class="nav-item" onclick="navigateTo('platforms', this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                        平台配置
+                    </div>
+                    <div class="nav-item" onclick="navigateTo('webhooks', this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                        Webhook推送
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">API</div>
+                    <div class="nav-item" onclick="navigateTo('apikeys', this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+                        </svg>
+                        API密钥管理
+                    </div>
+                    <div class="nav-item" onclick="navigateTo('apidocs', this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        API文档
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">其他</div>
+                    <div class="nav-item" onclick="navigateTo('statistics', this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        数据统计
+                    </div>
                     <div class="nav-item" onclick="navigateTo('settings', this)">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="3"></circle>
@@ -1593,6 +3091,27 @@
             </nav>
             
             <div class="sidebar-footer">
+                <!-- Theme Switcher -->
+                <div class="theme-switcher">
+                    <div class="theme-label">主题切换</div>
+                    <div class="theme-options">
+                        <button class="theme-btn" data-theme="dark-eye-care" title="暗黑护眼" onclick="setTheme('dark-eye-care')">
+                            <span class="theme-preview" style="background: linear-gradient(135deg, #0f172a, #1e293b); border-color: #4ade80;"></span>
+                        </button>
+                        <button class="theme-btn" data-theme="gray-blue" title="简约灰蓝" onclick="setTheme('gray-blue')">
+                            <span class="theme-preview" style="background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border-color: #3b82f6;"></span>
+                        </button>
+                        <button class="theme-btn" data-theme="warm-eye-care" title="暖色调护眼" onclick="setTheme('warm-eye-care')">
+                            <span class="theme-preview" style="background: linear-gradient(135deg, #fef3c7, #fed7aa); border-color: #f59e0b;"></span>
+                        </button>
+                        <button class="theme-btn" data-theme="classic-black-white" title="经典黑白" onclick="setTheme('classic-black-white')">
+                            <span class="theme-preview" style="background: linear-gradient(135deg, #ffffff, #f4f4f5); border-color: #18181b;"></span>
+                        </button>
+                        <button class="theme-btn" data-theme="purple-dream" title="紫色梦幻" onclick="setTheme('purple-dream')">
+                            <span class="theme-preview" style="background: linear-gradient(135deg, #1e1b4b, #312e81); border-color: #a855f7;"></span>
+                        </button>
+                    </div>
+                </div>
                 <div class="user-card">
                     <div class="user-avatar" id="userAvatar">U</div>
                     <div class="user-info">
@@ -1624,7 +3143,7 @@
                             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
                         </svg>
                     </button>
-                    <button class="btn-icon" onclick="showAddModal()" title="添加监控">
+                    <button class="btn-icon" id="addButton" onclick="handleAddButton()" title="添加">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -1637,6 +3156,26 @@
             <div class="content">
                 <!-- Dashboard Page -->
                 <div class="page-section active" id="dashboardPage">
+                    <!-- Tab Navigation -->
+                    <div class="dashboard-tabs">
+                        <button class="tab-btn active" onclick="switchDashboardTab('monitors')" id="tabMonitors">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            手动监控
+                        </button>
+                        <button class="tab-btn" onclick="switchDashboardTab('platforms')" id="tabPlatforms">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                            </svg>
+                            外部平台
+                        </button>
+                    </div>
+
+                    <!-- Monitors Tab Content -->
+                    <div class="tab-content active" id="monitorsTabContent">
                     <!-- Stats -->
                     <div class="stats-grid">
                         <div class="stat-card">
@@ -1773,6 +3312,59 @@
                             </div>
                         </div>
                     </div>
+                    </div>
+
+                    <!-- Platforms Tab Content -->
+                    <div class="tab-content" id="platformsTabContent">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">外部平台管理</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="settings-group">
+                                    <div class="settings-group-title">平台列表</div>
+                                    <div class="setting-item">
+                                        <button class="btn btn-primary" onclick="openAddPlatformModal()">添加外部平台</button>
+                                    </div>
+                                    <div class="platforms-list" id="platformsList">
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon">🌐</div>
+                                            <h3>暂无外部平台</h3>
+                                            <p>点击"添加外部平台"按钮接入第三方接码平台</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="settings-group">
+                                    <div class="settings-group-title">平台类型说明</div>
+                                    <div class="platform-types-info">
+                                        <div class="platform-type-card">
+                                            <div class="platform-type-header">
+                                                <span class="platform-type-badge type1">类型1</span>
+                                                <h4>手机号+URL模式</h4>
+                                            </div>
+                                            <p>一个手机号码对应一个API地址</p>
+                                            <div class="platform-type-example">
+                                                <code>手机号: 13800138000</code>
+                                                <code>API: https://api.example.com/code/13800138000</code>
+                                            </div>
+                                        </div>
+                                        <div class="platform-type-card">
+                                            <div class="platform-type-header">
+                                                <span class="platform-type-badge type2">类型2</span>
+                                                <h4>统一URL模式</h4>
+                                            </div>
+                                            <p>一个API地址返回多个手机号的验证码</p>
+                                            <div class="platform-type-example">
+                                                <code>API: https://api.example.com/codes</code>
+                                                <code>返回: [{"phone":"138xxx","code":"123456"},...]</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- History Page -->
@@ -1787,6 +3379,199 @@
                                     <div class="empty-state-icon">📋</div>
                                     <h3>暂无历史记录</h3>
                                     <p>验证码获取后将显示在这里</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phones Page -->
+                <div class="page-section" id="phonesPage">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">手机号管理</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="showAddPhoneModal()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    添加手机号
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>手机号</th>
+                                            <th>平台</th>
+                                            <th>状态</th>
+                                            <th>最后验证码</th>
+                                            <th>更新时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="phonesTable">
+                                        <tr><td colspan="6" style="text-align: center; padding: 40px;">加载中...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Platforms Page -->
+                <div class="page-section" id="platformsPage">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">外部平台配置</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="showAddPlatformModal()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    添加平台
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="platforms-grid" id="userPlatformsList">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">🌐</div>
+                                    <h3>暂无外部平台</h3>
+                                    <p>添加外部平台以获取验证码</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Webhooks Page -->
+                <div class="page-section" id="webhooksPage">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Webhook推送配置</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="showAddWebhookModal()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    添加Webhook
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>名称</th>
+                                            <th>URL</th>
+                                            <th>状态</th>
+                                            <th>最后推送</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="webhooksTable">
+                                        <tr><td colspan="5" style="text-align: center; padding: 40px;">暂无Webhook配置</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Docs Page -->
+                <div class="page-section" id="apidocsPage">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">API文档</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="api-doc-section">
+                                <h4>基础信息</h4>
+                                <div class="api-endpoint-box">
+                                    <span class="api-method get">GET</span>
+                                    <code>https://jm.91wz.org/backend/api/external/v1/index.php</code>
+                                </div>
+                            </div>
+                            <div class="api-doc-section">
+                                <h4>认证方式</h4>
+                                <pre class="api-code-example">Header: X-API-Key: sk_your_api_key_here
+或
+URL参数: ?api_key=sk_your_api_key_here</pre>
+                            </div>
+                            <div class="api-doc-section">
+                                <h4>接口列表</h4>
+                                <div class="api-endpoint-list">
+                                    <div class="api-endpoint-item">
+                                        <span class="api-method get">GET</span>
+                                        <span class="api-path">?path=codes</span>
+                                        <span class="api-desc">获取验证码列表</span>
+                                    </div>
+                                    <div class="api-endpoint-item">
+                                        <span class="api-method get">GET</span>
+                                        <span class="api-path">?path=codes/手机号</span>
+                                        <span class="api-desc">获取指定手机号验证码</span>
+                                    </div>
+                                    <div class="api-endpoint-item">
+                                        <span class="api-method get">GET</span>
+                                        <span class="api-path">?path=phones</span>
+                                        <span class="api-desc">获取手机号列表</span>
+                                    </div>
+                                    <div class="api-endpoint-item">
+                                        <span class="api-method get">GET</span>
+                                        <span class="api-path">?path=platforms</span>
+                                        <span class="api-desc">获取平台列表</span>
+                                    </div>
+                                    <div class="api-endpoint-item">
+                                        <span class="api-method post">POST</span>
+                                        <span class="api-path">?path=callback</span>
+                                        <span class="api-desc">推送验证码</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Page -->
+                <div class="page-section" id="statisticsPage">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon green">📊</div>
+                            <div class="stat-value" id="userTodayCodes">0</div>
+                            <div class="stat-label">今日验证码</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue">📱</div>
+                            <div class="stat-value" id="userTotalPhones">0</div>
+                            <div class="stat-label">监控手机号</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange">🔗</div>
+                            <div class="stat-value" id="userTotalMonitors">0</div>
+                            <div class="stat-label">监控项目</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">🔑</div>
+                            <div class="stat-value" id="userTotalApiKeys">0</div>
+                            <div class="stat-label">API密钥</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">验证码趋势</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="userCodesChart" style="height: 200px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 48px;">📈</div>
+                                    <p>暂无数据</p>
                                 </div>
                             </div>
                         </div>
@@ -1818,11 +3603,11 @@
                                         <p>设置自动刷新的时间间隔</p>
                                     </div>
                                     <select class="form-select" id="refreshInterval" style="width: 120px;" onchange="updateRefreshInterval()">
+                                        <option value="1" selected>1秒</option>
+                                        <option value="2">2秒</option>
                                         <option value="3">3秒</option>
-                                        <option value="5" selected>5秒</option>
+                                        <option value="5">5秒</option>
                                         <option value="10">10秒</option>
-                                        <option value="30">30秒</option>
-                                        <option value="60">1分钟</option>
                                     </select>
                                 </div>
                             </div>
@@ -1865,6 +3650,181 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- API Keys Page - New Design -->
+                <div class="page-section" id="apikeysPage">
+                    <div class="api-hero">
+                        <div class="api-hero-icon">🔌</div>
+                        <h2 class="api-hero-title">对外聚合API</h2>
+                        <p class="api-hero-desc">通过API接口集成验证码服务到您的系统</p>
+                    </div>
+
+                    <div class="api-dashboard">
+                        <div class="api-stats-row">
+                            <div class="api-stat-card">
+                                <div class="api-stat-icon" style="background: linear-gradient(135deg, #4ade80, #22c55e);">🔑</div>
+                                <div class="api-stat-content">
+                                    <div class="api-stat-value" id="apiKeyCount">0</div>
+                                    <div class="api-stat-label">API密钥</div>
+                                </div>
+                            </div>
+                            <div class="api-stat-card">
+                                <div class="api-stat-icon" style="background: linear-gradient(135deg, #60a5fa, #3b82f6);">📊</div>
+                                <div class="api-stat-content">
+                                    <div class="api-stat-value" id="apiCallCount">0</div>
+                                    <div class="api-stat-label">API调用</div>
+                                </div>
+                            </div>
+                            <div class="api-stat-card">
+                                <div class="api-stat-icon" style="background: linear-gradient(135deg, #f472b6, #ec4899);">📱</div>
+                                <div class="api-stat-content">
+                                    <div class="api-stat-value" id="apiPhoneCount">0</div>
+                                    <div class="api-stat-label">号码数量</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="api-main-grid">
+                            <div class="api-panel api-keys-panel">
+                                <div class="api-panel-header">
+                                    <h3>API密钥管理</h3>
+                                    <button class="btn btn-primary btn-glow" onclick="generateApiKey()">
+                                        <span>+</span> 生成新密钥
+                                    </button>
+                                </div>
+                                <div class="api-endpoint-box">
+                                    <div class="api-endpoint-label">API端点</div>
+                                    <div class="api-endpoint-url">
+                                        <code id="apiEndpointUrl">https://jm.91wz.org/backend/api/external/v1/index.php</code>
+                                        <button class="btn-copy" onclick="copyApiEndpoint()" title="复制">📋</button>
+                                    </div>
+                                </div>
+                                <div class="api-keys-list" id="apiKeysList">
+                                    <div class="api-empty">
+                                        <div class="api-empty-icon">🔑</div>
+                                        <div class="api-empty-text">暂无API密钥</div>
+                                        <div class="api-empty-hint">点击上方按钮生成密钥</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="api-panel api-docs-panel">
+                                <div class="api-panel-header">
+                                    <h3>API文档</h3>
+                                    <div class="api-doc-tabs">
+                                        <button class="api-doc-tab active" onclick="switchApiDocTab('auth')">认证</button>
+                                        <button class="api-doc-tab" onclick="switchApiDocTab('codes')">验证码</button>
+                                        <button class="api-doc-tab" onclick="switchApiDocTab('push')">推送</button>
+                                    </div>
+                                </div>
+                                <div class="api-doc-content" id="apiDocContent">
+                                    <div class="api-doc-section" id="apiDocAuth">
+                                        <div class="api-doc-card">
+                                            <div class="api-doc-title">
+                                                <span class="api-method api-method-header">Header</span>
+                                                <span>认证方式（推荐）</span>
+                                            </div>
+                                            <div class="api-code"><code>X-API-Key: sk_your_api_key_here</code></div>
+                                        </div>
+                                        <div class="api-doc-card">
+                                            <div class="api-doc-title">
+                                                <span class="api-method api-method-param">URL参数</span>
+                                                <span>备选方式</span>
+                                            </div>
+                                            <div class="api-code"><code>?api_key=sk_your_api_key_here</code></div>
+                                        </div>
+                                    </div>
+                                    <div class="api-doc-section" id="apiDocCodes" style="display:none;">
+                                        <div class="api-doc-card">
+                                            <div class="api-doc-title">
+                                                <span class="api-method api-method-get">GET</span>
+                                                <span>获取验证码列表</span>
+                                            </div>
+                                            <div class="api-code"><code>GET ?path=codes&page=1&page_size=20</code></div>
+                                            <div class="api-doc-params">
+                                                <div class="api-param"><span>page</span>页码</div>
+                                                <div class="api-param"><span>page_size</span>每页数量</div>
+                                                <div class="api-param"><span>phone</span>手机号筛选</div>
+                                            </div>
+                                        </div>
+                                        <div class="api-doc-card">
+                                            <div class="api-doc-title">
+                                                <span class="api-method api-method-get">GET</span>
+                                                <span>获取指定号码验证码</span>
+                                            </div>
+                                            <div class="api-code"><code>GET ?path=codes/13800138000</code></div>
+                                        </div>
+                                        <div class="api-doc-card">
+                                            <div class="api-doc-title">
+                                                <span class="api-method api-method-get">GET</span>
+                                                <span>获取号码列表</span>
+                                            </div>
+                                            <div class="api-code"><code>GET ?path=phones</code></div>
+                                        </div>
+                                    </div>
+                                    <div class="api-doc-section" id="apiDocPush" style="display:none;">
+                                        <div class="api-doc-card">
+                                            <div class="api-doc-title">
+                                                <span class="api-method api-method-post">POST</span>
+                                                <span>推送验证码</span>
+                                            </div>
+                                            <div class="api-code"><code>POST ?path=callback
+Content-Type: application/json
+
+{
+  "phone": "13800138000",
+  "code": "123456",
+  "message": "完整短信内容",
+  "platform": "来源平台"
+}</code></div>
+                                        </div>
+                                        <div class="api-doc-card">
+                                            <div class="api-doc-title">
+                                                <span class="api-method api-method-get">GET</span>
+                                                <span>获取平台列表</span>
+                                            </div>
+                                            <div class="api-code"><code>GET ?path=platforms</code></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="api-response-section">
+                            <h3>响应格式</h3>
+                            <div class="api-response-grid">
+                                <div class="api-response-card api-response-success">
+                                    <div class="api-response-header">
+                                        <span class="api-response-badge success">成功</span>
+                                        <span>200 OK</span>
+                                    </div>
+                                    <div class="api-code"><code>{
+  "success": true,
+  "data": {
+    "list": [...],
+    "pagination": {...}
+  },
+  "timestamp": "2026-03-01T12:00:00+08:00"
+}</code></div>
+                                </div>
+                                <div class="api-response-card api-response-error">
+                                    <div class="api-response-header">
+                                        <span class="api-response-badge error">错误</span>
+                                        <span>401 Unauthorized</span>
+                                    </div>
+                                    <div class="api-code"><code>{
+  "success": false,
+  "error": {
+    "code": 401,
+    "message": "Invalid API Key"
+  },
+  "timestamp": "2026-03-01T12:00:00+08:00"
+}</code></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -1894,6 +3854,107 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('addModal')">取消</button>
                 <button class="btn btn-primary" onclick="submitAdd()">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Modal -->
+    <div class="modal-overlay" id="platformModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="platformModalTitle">添加外部平台</h3>
+                <button class="modal-close" onclick="closeModal('platformModal')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="platformId">
+                
+                <div class="form-group">
+                    <label class="form-label">平台名称 *</label>
+                    <input type="text" class="form-input" id="platformName" placeholder="例如：接码平台A">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">平台类型 *</label>
+                    <select class="form-select" id="platformType" onchange="togglePlatformTypeFields()">
+                        <option value="type1">类型1 - 手机号+URL模式</option>
+                        <option value="type2">类型2 - 统一URL模式</option>
+                    </select>
+                    <div class="form-hint">类型1：每个手机号对应独立API地址；类型2：一个API返回所有验证码</div>
+                </div>
+
+                <div id="type1Fields">
+                    <div class="form-group">
+                        <label class="form-label">API URL模板 *</label>
+                        <input type="text" class="form-input" id="platformUrl" placeholder="https://api.example.com/code/{phone}">
+                        <div class="form-hint">使用 {phone} 作为手机号占位符</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">手机号（可选）</label>
+                        <input type="text" class="form-input" id="platformPhone" placeholder="13800138000">
+                        <div class="form-hint">如果此API仅对应特定手机号，请填写</div>
+                    </div>
+                </div>
+
+                <div id="type2Fields" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">API URL *</label>
+                        <input type="text" class="form-input" id="platformUrl2" placeholder="https://api.example.com/codes">
+                        <div class="form-hint">返回所有手机号验证码的统一接口</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">响应格式</label>
+                    <select class="form-select" id="responseType">
+                        <option value="json">JSON</option>
+                        <option value="xml">XML</option>
+                        <option value="text">纯文本</option>
+                    </select>
+                </div>
+
+                <div id="jsonConfigFields">
+                    <div class="form-group">
+                        <label class="form-label">手机号字段名</label>
+                        <input type="text" class="form-input" id="phoneField" placeholder="phone">
+                        <div class="form-hint">JSON中手机号的字段名，如 phone、mobile、number</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">验证码字段名</label>
+                        <input type="text" class="form-input" id="codeField" placeholder="code">
+                        <div class="form-hint">JSON中验证码的字段名，如 code、sms_code、verify_code</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">数据路径</label>
+                        <input type="text" class="form-input" id="dataPath" placeholder="data 或留空">
+                        <div class="form-hint">如果数据在嵌套字段中，如 data.list</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">验证码正则</label>
+                    <input type="text" class="form-input" id="codePattern" placeholder="\d{4,6}">
+                    <div class="form-hint">用于从响应中提取验证码的正则表达式</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">请求间隔（秒）</label>
+                    <input type="number" class="form-input" id="requestInterval" value="30" min="5" max="300">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">请求头（JSON格式）</label>
+                    <textarea class="form-textarea" id="requestHeaders" rows="3" placeholder='{"Authorization": "Bearer xxx"}'></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('platformModal')">取消</button>
+                <button class="btn btn-secondary" onclick="testPlatformConnection()">测试连接</button>
+                <button class="btn btn-primary" onclick="savePlatform()">保存</button>
             </div>
         </div>
     </div>
@@ -1938,7 +3999,7 @@
             </div>
             <div class="code-modal-footer">
                 <button class="btn btn-secondary" onclick="closeCodeModal()">关闭</button>
-                <button class="btn btn-primary" onclick="copyCodeFromModal()">复制并关闭</button>
+                <button class="btn btn-primary" onclick="copyCodeFromModal(true)">复制并关闭</button>
             </div>
         </div>
     </div>
@@ -1967,26 +4028,45 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            checkAuth();
-            loadUserInfo();
-            loadMonitors();
-            loadHistory();
-            startAutoRefresh();
-            requestNotificationPermission();
-            
-            // Load notified codes from localStorage
-            const savedNotified = localStorage.getItem('notifiedCodes');
-            if (savedNotified) {
-                notifiedCodes = new Set(JSON.parse(savedNotified));
+            console.log('DOMContentLoaded event fired');
+            loadTheme(); // Load saved theme
+            const token = checkAuth();
+            console.log('Token from checkAuth:', token ? 'exists' : 'null');
+            if (token) {
+                loadUserInfo();
+                loadMonitors();
+                loadHistory();
+                startAutoRefresh();
+                requestNotificationPermission();
+                
+                // Load notified codes from localStorage
+                const savedNotified = localStorage.getItem('notifiedCodes');
+                if (savedNotified) {
+                    notifiedCodes = new Set(JSON.parse(savedNotified));
+                }
+                
+                // Clean up old codes (keep last 200)
+                cleanupOldCodes();
             }
         });
+
+        // Clean up old codes
+        function cleanupOldCodes() {
+            const codesArray = Array.from(notifiedCodes);
+            if (codesArray.length > 200) {
+                notifiedCodes = new Set(codesArray.slice(-200));
+                localStorage.setItem('notifiedCodes', JSON.stringify(Array.from(notifiedCodes)));
+            }
+        }
 
         // Check authentication
         function checkAuth() {
             const token = localStorage.getItem('token');
             if (!token) {
                 window.location.href = 'login.html';
+                return null;
             }
+            return token;
         }
 
         // Load user info
@@ -2001,6 +4081,8 @@
         }
 
         // Navigation
+        let currentDashboardTab = 'monitors';
+        
         function navigateTo(page, clickedElement) {
             currentPage = page;
             
@@ -2016,20 +4098,115 @@
             document.querySelectorAll('.page-section').forEach(section => {
                 section.classList.remove('active');
             });
-            document.getElementById(page + 'Page').classList.add('active');
             
-            // Update page title
+            const pageElement = document.getElementById(page + 'Page');
+            if (pageElement) {
+                pageElement.classList.add('active');
+            }
+            
             const titles = {
                 'dashboard': '监控面板',
-                'history': '历史记录',
+                'history': '验证码记录',
+                'phones': '手机号管理',
+                'platforms': '平台配置',
+                'webhooks': 'Webhook推送',
+                'apikeys': 'API密钥管理',
+                'apidocs': 'API文档',
+                'statistics': '数据统计',
                 'settings': '设置'
             };
-            document.getElementById('pageTitle').textContent = titles[page];
+            document.getElementById('pageTitle').textContent = titles[page] || page;
+            
+            // Update add button visibility and action
+            updateAddButton();
+            
+            // Load page specific data
+            switch(page) {
+                case 'apikeys':
+                    loadApiKeys();
+                    break;
+                case 'history':
+                    loadHistory();
+                    break;
+                case 'phones':
+                    loadPhones();
+                    break;
+                case 'platforms':
+                    loadUserPlatforms();
+                    break;
+                case 'webhooks':
+                    loadWebhooks();
+                    break;
+                case 'statistics':
+                    loadUserStatistics();
+                    break;
+            }
+        }
+
+        // Update add button based on current page
+        function updateAddButton() {
+            const addBtn = document.getElementById('addButton');
+            if (!addBtn) return;
+            
+            if (currentPage === 'dashboard') {
+                addBtn.style.display = 'flex';
+                if (currentDashboardTab === 'monitors') {
+                    addBtn.title = '添加监控';
+                } else {
+                    addBtn.title = '添加外部平台';
+                }
+            } else {
+                // 隐藏顶部+按钮，其他页面有自己的内部按钮
+                addBtn.style.display = 'none';
+            }
+        }
+
+        // Handle add button click
+        function handleAddButton() {
+            if (currentPage === 'dashboard') {
+                if (currentDashboardTab === 'monitors') {
+                    showAddModal();
+                } else {
+                    openAddPlatformModal();
+                }
+            }
+        }
+
+        // Dashboard Tab Switching
+        function switchDashboardTab(tab) {
+            currentDashboardTab = tab;
+            const monitorsTab = document.getElementById('tabMonitors');
+            const platformsTab = document.getElementById('tabPlatforms');
+            const monitorsContent = document.getElementById('monitorsTabContent');
+            const platformsContent = document.getElementById('platformsTabContent');
+            
+            if (tab === 'monitors') {
+                monitorsTab.classList.add('active');
+                platformsTab.classList.remove('active');
+                monitorsContent.classList.add('active');
+                platformsContent.classList.remove('active');
+            } else {
+                monitorsTab.classList.remove('active');
+                platformsTab.classList.add('active');
+                monitorsContent.classList.remove('active');
+                platformsContent.classList.add('active');
+                loadPlatforms();
+            }
+            
+            // Update add button
+            updateAddButton();
         }
 
         // Load monitors - silent background refresh
         function loadMonitors(silent = false) {
             const token = localStorage.getItem('token');
+            
+            if (!token) {
+                if (!silent) {
+                    window.location.href = 'login.html';
+                }
+                return;
+            }
             
             fetch('backend/api/monitors/index.php', {
                 headers: {
@@ -2037,14 +4214,22 @@
                 }
             })
             .then(response => {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                    throw new Error('Unauthorized');
+                }
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
             })
             .then(data => {
-                if (data.success && data.data && Array.isArray(data.data.list)) {
+                console.log('loadMonitors response:', data);
+                if (data && data.success && data.data && Array.isArray(data.data.list)) {
                     const newMonitors = data.data.list;
+                    console.log('newMonitors count:', newMonitors.length);
 
                     // Check for new codes before updating monitors
                     if (monitors && monitors.length > 0) {
@@ -2052,16 +4237,21 @@
                     }
 
                     monitors = newMonitors;
+                    console.log('monitors assigned, count:', monitors.length);
                     
                     // Only update UI if not silent mode
                     if (!silent) {
                         updateStats();
                         renderMonitors();
                     }
+                } else {
+                    console.error('loadMonitors: Invalid data format', data);
                 }
             })
             .catch(error => {
-                console.error('Silent refresh error:', error);
+                if (error.message !== 'Unauthorized') {
+                    console.error('Silent refresh error:', error);
+                }
             });
         }
 
@@ -2080,6 +4270,7 @@
 
         // Render monitors table with incremental updates to avoid flickering
         function renderMonitors() {
+            console.log('renderMonitors called, monitors:', monitors ? monitors.length : 'undefined');
             const tbody = document.getElementById('monitorTableBody');
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             
@@ -2088,6 +4279,8 @@
             if (searchTerm) {
                 filtered = filtered.filter(m => m.phone.toLowerCase().includes(searchTerm));
             }
+            
+            console.log('filtered monitors:', filtered.length);
             
             if (filtered.length === 0) {
                 tbody.innerHTML = `
@@ -2103,6 +4296,10 @@
                 `;
                 return;
             }
+            
+            // Clear any existing empty-state rows first
+            const emptyStateRows = tbody.querySelectorAll('tr:not([data-monitor-id])');
+            emptyStateRows.forEach(row => row.remove());
             
             // Get existing rows
             const existingRows = Array.from(tbody.querySelectorAll('tr[data-monitor-id]'));
@@ -2121,7 +4318,7 @@
             filtered.forEach((monitor, index) => {
                 const phone = escapeHtml(monitor.phone);
                 const code = escapeHtml(monitor.last_extracted_code);
-                const checkTime = escapeHtml(monitor.last_check_time);
+                const checkTime = escapeHtml(monitor.last_update);
                 const rowId = `monitor-row-${monitor.id}`;
                 let row = document.getElementById(rowId);
                 
@@ -2421,18 +4618,15 @@
                     body: JSON.stringify(item)
                 }).then(async r => {
                     const text = await r.text();
-                    console.log('API Response:', r.status, text);
                     try {
                         return JSON.parse(text);
                     } catch (e) {
-                        console.error('JSON Parse Error:', text);
                         return { success: false, message: 'Invalid JSON: ' + text };
                     }
                 })
             ))
             .then(results => {
                 hideLoading();
-                console.log('Results:', results);
                 results.forEach(r => {
                     if (r.success) success++;
                     else failed++;
@@ -2482,7 +4676,7 @@
             
             showLoading();
             
-            fetch('backend/api/monitors/index.php/refresh-all', {
+            fetch('backend/api/monitors/index.php?path=refresh-all', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -2594,20 +4788,31 @@
         function loadHistory() {
             const token = localStorage.getItem('token');
             
+            if (!token) {
+                return;
+            }
+            
             fetch('backend/api/codes/index.php', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (response.status === 401) {
+                    throw new Error('Unauthorized');
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.success) {
-                    history = data.data.list;
+                if (data && data.success) {
+                    history = data.data.list || [];
                     renderHistory();
                 }
             })
             .catch(error => {
-                console.error('Error loading history:', error);
+                if (error.message !== 'Unauthorized') {
+                    console.error('Error loading history:', error);
+                }
             });
         }
 
@@ -2628,7 +4833,9 @@
             
             const recentHistory = history.slice(0, 12);
             
-            grid.innerHTML = recentHistory.map(item => `
+            grid.innerHTML = recentHistory.map(item => {
+                const sourceName = item.source_url ? new URL(item.source_url).hostname : 'API';
+                return `
                 <div class="history-card">
                     <div class="history-card-header">
                         <span class="history-phone">${item.phone}</span>
@@ -2644,10 +4851,10 @@
                         </button>
                     </div>
                     <div class="history-meta">
-                        <span>来源: ${item.source || 'API'}</span>
+                        <span>来源: ${sourceName}</span>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         // Format time
@@ -2771,9 +4978,24 @@
 
         // Show code modal popup (replaces notification)
         let currentModalCode = '';
+        let currentModalPhone = '';
         
         function showCodeNotification(phone, code, time) {
             currentModalCode = code;
+            currentModalPhone = phone; // Store phone for dismissal tracking
+            
+            // Reset button state
+            const btn = document.getElementById('codeModalCopyBtn');
+            if (btn) {
+                btn.classList.remove('copied');
+                btn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    一键复制
+                `;
+            }
             
             // Update modal content
             document.getElementById('codeModalTitle').textContent = `新验证码 - ${phone}`;
@@ -2796,11 +5018,26 @@
         function closeCodeModal() {
             const modal = document.getElementById('codeModalOverlay');
             modal.style.display = 'none';
+            
             currentModalCode = '';
+            currentModalPhone = '';
+            
+            // Reset button state
+            const btn = document.getElementById('codeModalCopyBtn');
+            if (btn) {
+                btn.classList.remove('copied');
+                btn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    一键复制
+                `;
+            }
         }
         
         // Copy code from modal
-        function copyCodeFromModal() {
+        function copyCodeFromModal(closeAfterCopy = false) {
             if (!currentModalCode) return;
             
             navigator.clipboard.writeText(currentModalCode).then(() => {
@@ -2817,10 +5054,16 @@
                 
                 showToast('success', '复制成功', `验证码 ${currentModalCode} 已复制到剪贴板`);
                 
-                setTimeout(() => {
-                    btn.classList.remove('copied');
-                    btn.innerHTML = originalHTML;
-                }, 2000);
+                if (closeAfterCopy) {
+                    setTimeout(() => {
+                        closeCodeModal();
+                    }, 300);
+                } else {
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.innerHTML = originalHTML;
+                    }, 2000);
+                }
             }).catch(err => {
                 console.error('复制失败:', err);
                 showToast('error', '复制失败', '请手动复制验证码');
@@ -2873,25 +5116,31 @@
             const notificationsEnabled = document.getElementById('notifications').checked;
             
             newMonitors.forEach(monitor => {
-                if (monitor.last_extracted_code && monitor.status === 'success') {
-                    const codeKey = `${monitor.phone}_${monitor.last_extracted_code}_${monitor.last_check_time}`;
+                if (monitor.last_extracted_code && monitor.status === 'success' && monitor.code_timestamp) {
+                    // Use phone + code + code_timestamp as unique identifier
+                    // code_timestamp only changes when a NEW code arrives
+                    const codeKey = `${monitor.phone}_${monitor.last_extracted_code}_${monitor.code_timestamp}`;
                     
+                    // Check if already notified for this specific code timestamp
                     if (!notifiedCodes.has(codeKey)) {
                         notifiedCodes.add(codeKey);
                         
-                        // Save to localStorage (keep last 100 codes)
+                        // Save to localStorage (keep last 200 codes)
                         const codesArray = Array.from(notifiedCodes);
-                        if (codesArray.length > 100) {
-                            notifiedCodes = new Set(codesArray.slice(-100));
+                        if (codesArray.length > 200) {
+                            notifiedCodes = new Set(codesArray.slice(-200));
                         }
                         localStorage.setItem('notifiedCodes', JSON.stringify(Array.from(notifiedCodes)));
                         
                         // Show notification
                         if (notificationsEnabled) {
+                            // Store phone for dismissal tracking
+                            currentModalPhone = monitor.phone;
+                            
                             showCodeNotification(
                                 monitor.phone,
                                 monitor.last_extracted_code,
-                                monitor.last_check_time
+                                monitor.last_update
                             );
                             
                             // Also show desktop notification if permitted
@@ -2938,7 +5187,7 @@
 
             const token = localStorage.getItem('token');
 
-            fetch('backend/api/auth/index.php/change-password', {
+            fetch('backend/api/auth/index.php?path=change-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -2972,10 +5221,918 @@
             });
         }
 
+        // Theme Management
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('theme', themeName);
+            updateThemeButtons(themeName);
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark-eye-care';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeButtons(savedTheme);
+        }
+
+        function updateThemeButtons(activeTheme) {
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                if (btn.dataset.theme === activeTheme) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
         function logout() {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = 'login.html';
+        }
+
+        // Phones Management
+        async function loadPhones() {
+            const token = localStorage.getItem('token');
+            const tbody = document.getElementById('phonesTable');
+            
+            try {
+                // 从monitors获取手机号列表
+                const response = await fetch('backend/api/monitors/index.php', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.list && data.data.list.length > 0) {
+                    tbody.innerHTML = data.data.list.map(phone => `
+                        <tr data-phone-id="${phone.id}">
+                            <td>${phone.phone}</td>
+                            <td><span class="badge ${phone.status === 'success' ? 'badge-success' : 'badge-warning'}">${phone.status === 'success' ? '正常' : '等待'}</span></td>
+                            <td>${phone.last_extracted_code || '-'}</td>
+                            <td>${phone.last_update || '-'}</td>
+                            <td>${phone.url || '-'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary" onclick="refreshMonitor(${phone.id})">刷新</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteMonitor(${phone.id})">删除</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">暂无手机号，请在监控面板添加</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载手机号失败:', error);
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">加载失败</td></tr>';
+            }
+        }
+
+        function showAddPhoneModal() {
+            showToast('info', '提示', '请在监控面板中添加手机号');
+        }
+
+        // Platforms Management
+        async function loadUserPlatforms() {
+            const token = localStorage.getItem('token');
+            const container = document.getElementById('userPlatformsList');
+            
+            try {
+                const response = await fetch('backend/api/external/platforms/index.php', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    container.innerHTML = data.data.map(p => `
+                        <div class="platform-card">
+                            <div class="platform-card-header">
+                                <span class="platform-name">${p.name}</span>
+                                <span class="badge ${p.status === 'active' ? 'badge-success' : 'badge-danger'}">${p.status === 'active' ? '正常' : '禁用'}</span>
+                            </div>
+                            <div class="platform-card-body">
+                                <div class="platform-info-row">
+                                    <span class="label">类型:</span>
+                                    <span class="value">${p.platform_type === 'type1' ? '类型1' : '类型2'}</span>
+                                </div>
+                                <div class="platform-info-row">
+                                    <span class="label">API地址:</span>
+                                    <span class="value" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${p.api_url || '-'}</span>
+                                </div>
+                                <div class="platform-info-row">
+                                    <span class="label">请求间隔:</span>
+                                    <span class="value">${p.request_interval || 30}秒</span>
+                                </div>
+                            </div>
+                            <div class="platform-card-footer">
+                                <button class="btn btn-sm btn-secondary" onclick="editUserPlatform(${p.id})">编辑</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUserPlatform(${p.id})">删除</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🌐</div>
+                            <h3>暂无外部平台</h3>
+                            <p>添加外部平台以获取验证码</p>
+                            <button class="btn btn-primary" onclick="showAddUserPlatformModal()">添加平台</button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('加载平台失败:', error);
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--danger);">加载失败</div>';
+            }
+        }
+
+        function showAddUserPlatformModal() {
+            document.getElementById('addPlatformModal').classList.add('active');
+        }
+
+        async function editUserPlatform(id) {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`backend/api/external/platforms/index.php?id=${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    const platform = data.data;
+                    document.getElementById('editPlatformId').value = platform.id;
+                    document.getElementById('editPlatformName').value = platform.name || '';
+                    document.getElementById('editPlatformType').value = platform.platform_type || 'type1';
+                    document.getElementById('editPlatformUrl').value = platform.api_url || '';
+                    document.getElementById('editPlatformInterval').value = platform.request_interval || 30;
+                    document.getElementById('editPlatformActive').checked = platform.is_active;
+                    document.getElementById('editPlatformModal').classList.add('active');
+                } else {
+                    showToast('error', '错误', '获取平台信息失败');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            }
+        }
+
+        async function saveEditPlatform() {
+            const token = localStorage.getItem('token');
+            const id = document.getElementById('editPlatformId').value;
+            const name = document.getElementById('editPlatformName').value;
+            const platform_type = document.getElementById('editPlatformType').value;
+            const api_url = document.getElementById('editPlatformUrl').value;
+            const request_interval = document.getElementById('editPlatformInterval').value;
+            const is_active = document.getElementById('editPlatformActive').checked ? 1 : 0;
+            
+            if (!name || !api_url) {
+                showToast('error', '错误', '请填写必要信息');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`backend/api/external/platforms/index.php?id=${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, platform_type, api_url, request_interval, is_active })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('success', '成功', '平台已更新');
+                    closeModal('editPlatformModal');
+                    loadUserPlatforms();
+                } else {
+                    showToast('error', '错误', data.message || '更新失败');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            }
+        }
+
+        async function deleteUserPlatform(id) {
+            if (!confirm('确定要删除此平台吗？')) return;
+            
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`backend/api/external/platforms/index.php?id=${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('success', '成功', '平台已删除');
+                    loadUserPlatforms();
+                } else {
+                    showToast('error', '错误', data.message || '删除失败');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            }
+        }
+
+        // Webhooks Management
+        async function loadWebhooks() {
+            const token = localStorage.getItem('token');
+            const tbody = document.getElementById('webhooksTable');
+            
+            try {
+                const response = await fetch('backend/api/webhooks/index.php', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.list && data.data.list.length > 0) {
+                    tbody.innerHTML = data.data.list.map(wh => `
+                        <tr>
+                            <td>${wh.name}</td>
+                            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;"><code>${wh.url}</code></td>
+                            <td><span class="badge ${wh.is_active ? 'badge-success' : 'badge-danger'}">${wh.is_active ? '启用' : '禁用'}</span></td>
+                            <td>${wh.last_triggered_at || '-'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary" onclick="testWebhook(${wh.id})">测试</button>
+                                <button class="btn btn-sm btn-secondary" onclick="editWebhook(${wh.id})">编辑</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteWebhook(${wh.id})">删除</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">暂无Webhook配置</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载Webhook失败:', error);
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">加载失败</td></tr>';
+            }
+        }
+
+        function showAddWebhookModal() {
+            document.getElementById('addWebhookModal').classList.add('active');
+        }
+
+        async function createWebhook() {
+            const token = localStorage.getItem('token');
+            const name = document.getElementById('webhookName').value;
+            const url = document.getElementById('webhookUrl').value;
+            const secret = document.getElementById('webhookSecret').value;
+            
+            if (!name || !url) {
+                showToast('error', '错误', '请填写名称和URL');
+                return;
+            }
+            
+            try {
+                const response = await fetch('backend/api/webhooks/index.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, url, secret, events: ['code_received'], is_active: 1 })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('success', '成功', 'Webhook创建成功');
+                    closeModal('addWebhookModal');
+                    loadWebhooks();
+                } else {
+                    showToast('error', '错误', data.message || '创建失败');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            }
+        }
+
+        async function testWebhook(id) {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`backend/api/webhooks/index.php/${id}/test`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('success', '测试结果', `状态: ${data.data.status}, 耗时: ${data.data.response_time_ms}ms`);
+                } else {
+                    showToast('error', '测试失败', data.message || '未知错误');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            }
+        }
+
+        async function editWebhook(id) {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`backend/api/webhooks/index.php/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    const webhook = data.data;
+                    document.getElementById('editWebhookId').value = webhook.id;
+                    document.getElementById('editWebhookName').value = webhook.name || '';
+                    document.getElementById('editWebhookUrl').value = webhook.url || '';
+                    document.getElementById('editWebhookSecret').value = webhook.secret || '';
+                    document.getElementById('editWebhookActive').checked = webhook.is_active;
+                    document.getElementById('editWebhookModal').classList.add('active');
+                } else {
+                    showToast('error', '错误', '获取Webhook信息失败');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            }
+        }
+
+        async function saveEditWebhook() {
+            const token = localStorage.getItem('token');
+            const id = document.getElementById('editWebhookId').value;
+            const name = document.getElementById('editWebhookName').value;
+            const url = document.getElementById('editWebhookUrl').value;
+            const secret = document.getElementById('editWebhookSecret').value;
+            const is_active = document.getElementById('editWebhookActive').checked ? 1 : 0;
+            
+            if (!name || !url) {
+                showToast('error', '错误', '请填写名称和URL');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`backend/api/webhooks/index.php/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, url, secret, is_active, events: ['code_received'] })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('success', '成功', 'Webhook已更新');
+                    closeModal('editWebhookModal');
+                    loadWebhooks();
+                } else {
+                    showToast('error', '错误', data.message || '更新失败');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            }
+        }
+
+        async function deleteWebhook(id) {
+            if (!confirm('确定要删除此Webhook吗？')) return;
+            
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`backend/api/webhooks/index.php/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('success', '成功', 'Webhook已删除');
+                    loadWebhooks();
+                } else {
+                    showToast('error', '错误', data.message || '删除失败');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            }
+        }
+
+        // Statistics
+        async function loadUserStatistics() {
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch('backend/api/statistics/index.php?action=overview', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('userTodayCodes').textContent = data.data.today_codes || 0;
+                    document.getElementById('userTotalPhones').textContent = data.data.total_phones || 0;
+                    document.getElementById('userTotalMonitors').textContent = data.data.active_monitors || 0;
+                    document.getElementById('userTotalApiKeys').textContent = data.data.total_api_keys || 0;
+                    
+                    // 更新统计卡片
+                    const weekEl = document.getElementById('userWeekCodes');
+                    const monthEl = document.getElementById('userMonthCodes');
+                    const totalEl = document.getElementById('userTotalCodes');
+                    
+                    if (weekEl) weekEl.textContent = data.data.week_codes || 0;
+                    if (monthEl) monthEl.textContent = data.data.month_codes || 0;
+                    if (totalEl) totalEl.textContent = data.data.total_codes || 0;
+                }
+            } catch (error) {
+                console.error('加载统计数据失败:', error);
+            }
+        }
+
+        // API Keys Management
+        function loadApiKeys() {
+            const token = localStorage.getItem('token');
+            
+            fetch('backend/api/apikeys/index.php', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data && data.data.list) {
+                    renderApiKeys(data.data.list);
+                } else {
+                    document.getElementById('apiKeysList').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔑</div>
+                            <h3>暂无API密钥</h3>
+                            <p>点击"生成新密钥"按钮创建API密钥</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading API keys:', error);
+                showToast('error', '错误', '加载API密钥失败');
+            });
+        }
+
+        function renderApiKeys(keys) {
+            const container = document.getElementById('apiKeysList');
+            
+            if (!keys || keys.length === 0) {
+                container.innerHTML = `
+                    <div class="api-empty">
+                        <div class="api-empty-icon">🔑</div>
+                        <div class="api-empty-text">暂无API密钥</div>
+                        <div class="api-empty-hint">点击上方按钮生成密钥</div>
+                    </div>
+                `;
+                document.getElementById('apiKeyCount').textContent = '0';
+                return;
+            }
+            
+            document.getElementById('apiKeyCount').textContent = keys.length;
+            
+            let html = '';
+            keys.forEach(key => {
+                const statusClass = key.status === 'active' ? 'status-active' : 'status-inactive';
+                const statusText = key.status === 'active' ? '活跃' : '已禁用';
+                const expiresAt = key.expires_at ? new Date(key.expires_at).toLocaleDateString() : '永不过期';
+                html += `
+                    <div class="api-key-item">
+                        <div class="api-key-header">
+                            <span class="api-key-name">${key.name || 'API密钥'}</span>
+                            <span class="api-key-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="api-key-info">
+                            <code class="api-key-value">${key.api_key}</code>
+                            ${key.api_secret ? `<div class="api-secret"><small>Secret: ${key.api_secret.substring(0, 20)}...</small></div>` : ''}
+                            <div class="api-key-date">创建于: ${key.created_at}</div>
+                            <div class="api-key-expires">有效期: ${expiresAt}</div>
+                        </div>
+                        <div class="api-key-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="copyApiKey('${key.api_key}')">📋 复制</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteApiKey(${key.id})">🗑️ 删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function switchApiDocTab(tab) {
+            document.querySelectorAll('.api-doc-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.api-doc-section').forEach(s => s.style.display = 'none');
+            document.getElementById('apiDoc' + tab.charAt(0).toUpperCase() + tab.slice(1)).style.display = 'block';
+        }
+
+        function copyApiEndpoint() {
+            const endpoint = document.getElementById('apiEndpointUrl').textContent;
+            navigator.clipboard.writeText(endpoint).then(() => {
+                showToast('success', '成功', 'API端点已复制到剪贴板');
+            }).catch(() => {
+                showToast('error', '错误', '复制失败');
+            });
+        }
+
+        function generateApiKey() {
+            const token = localStorage.getItem('token');
+            
+            fetch('backend/api/apikeys/index.php', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ name: '用户密钥', expire_days: 90 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('success', '成功', 'API密钥生成成功');
+                    loadApiKeys();
+                } else {
+                    showToast('error', '错误', data.message || '生成失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error generating API key:', error);
+                showToast('error', '错误', '生成API密钥失败');
+            });
+        }
+
+        function copyApiKey(key) {
+            navigator.clipboard.writeText(key).then(() => {
+                showToast('success', '成功', 'API密钥已复制到剪贴板');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        function copyApiEndpoint() {
+            const url = document.getElementById('apiEndpointUrl').textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('success', '成功', 'API端点URL已复制到剪贴板');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        function deleteApiKey(id) {
+            if (!confirm('确定要删除此API密钥吗？删除后无法恢复。')) {
+                return;
+            }
+            
+            const token = localStorage.getItem('token');
+            
+            fetch(`backend/api/apikeys/index.php?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('success', '成功', 'API密钥已删除');
+                    loadApiKeys();
+                } else {
+                    showToast('error', '错误', data.message || '删除失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting API key:', error);
+                showToast('error', '错误', '删除API密钥失败');
+            });
+        }
+
+        // Platforms Management
+        let platforms = [];
+        
+        function loadPlatforms() {
+            const token = localStorage.getItem('token');
+            
+            fetch('backend/api/external/platforms/index.php', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    platforms = data.data;
+                    renderPlatforms(data.data);
+                } else {
+                    document.getElementById('platformsList').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🌐</div>
+                            <h3>暂无外部平台</h3>
+                            <p>点击"添加外部平台"按钮接入第三方接码平台</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading platforms:', error);
+                showToast('error', '错误', '加载外部平台失败');
+            });
+        }
+
+        function renderPlatforms(platformList) {
+            const container = document.getElementById('platformsList');
+            
+            if (!platformList || platformList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🌐</div>
+                        <h3>暂无外部平台</h3>
+                        <p>点击"添加外部平台"按钮接入第三方接码平台</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="platforms-grid">';
+            platformList.forEach(platform => {
+                const statusClass = platform.status === 'active' ? 'status-active' : 'status-inactive';
+                const statusText = platform.status === 'active' ? '启用' : '禁用';
+                const typeBadge = platform.platform_type === 'type1' ? 
+                    '<span class="platform-type-badge type1">类型1</span>' : 
+                    '<span class="platform-type-badge type2">类型2</span>';
+                
+                html += `
+                    <div class="platform-item">
+                        <div class="platform-header">
+                            <span class="platform-name">${escapeHtml(platform.name)}</span>
+                            ${typeBadge}
+                            <span class="platform-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="platform-info">
+                            <div class="platform-url"><code>${escapeHtml(platform.api_url || '')}</code></div>
+                            <div class="platform-meta">
+                                <span>间隔: ${platform.request_interval || 30}秒</span>
+                                <span>格式: ${platform.response_type || 'json'}</span>
+                            </div>
+                        </div>
+                        <div class="platform-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="testPlatform(${platform.id})">测试</button>
+                            <button class="btn btn-sm btn-secondary" onclick="fetchPlatformCodes(${platform.id})">获取验证码</button>
+                            <button class="btn btn-sm btn-secondary" onclick="editPlatform(${platform.id})">编辑</button>
+                            <button class="btn btn-sm ${platform.status === 'active' ? 'btn-warning' : 'btn-success'}" onclick="togglePlatformStatus(${platform.id}, '${platform.status}')">
+                                ${platform.status === 'active' ? '禁用' : '启用'}
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deletePlatform(${platform.id})">删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function openAddPlatformModal() {
+            document.getElementById('platformModalTitle').textContent = '添加外部平台';
+            document.getElementById('platformId').value = '';
+            document.getElementById('platformName').value = '';
+            document.getElementById('platformType').value = 'type1';
+            document.getElementById('platformUrl').value = '';
+            document.getElementById('platformPhone').value = '';
+            document.getElementById('platformUrl2').value = '';
+            document.getElementById('responseType').value = 'json';
+            document.getElementById('phoneField').value = 'phone';
+            document.getElementById('codeField').value = 'code';
+            document.getElementById('dataPath').value = '';
+            document.getElementById('codePattern').value = '\\d{4,6}';
+            document.getElementById('requestInterval').value = '30';
+            document.getElementById('requestHeaders').value = '';
+            togglePlatformTypeFields();
+            openModal('platformModal');
+        }
+
+        function editPlatform(id) {
+            const platform = platforms.find(p => p.id === id);
+            if (!platform) return;
+            
+            document.getElementById('platformModalTitle').textContent = '编辑外部平台';
+            document.getElementById('platformId').value = platform.id;
+            document.getElementById('platformName').value = platform.name || '';
+            document.getElementById('platformType').value = platform.platform_type || 'type1';
+            document.getElementById('platformUrl').value = platform.api_url || '';
+            document.getElementById('platformPhone').value = platform.phone || '';
+            document.getElementById('platformUrl2').value = platform.api_url || '';
+            document.getElementById('responseType').value = platform.response_type || 'json';
+            document.getElementById('phoneField').value = platform.phone_field || 'phone';
+            document.getElementById('codeField').value = platform.code_field || 'code';
+            document.getElementById('dataPath').value = platform.data_path || '';
+            document.getElementById('codePattern').value = platform.code_pattern || '\\d{4,6}';
+            document.getElementById('requestInterval').value = platform.request_interval || 30;
+            document.getElementById('requestHeaders').value = platform.request_headers || '';
+            togglePlatformTypeFields();
+            openModal('platformModal');
+        }
+
+        function togglePlatformTypeFields() {
+            const type = document.getElementById('platformType').value;
+            const type1Fields = document.getElementById('type1Fields');
+            const type2Fields = document.getElementById('type2Fields');
+            
+            if (type === 'type1') {
+                type1Fields.style.display = 'block';
+                type2Fields.style.display = 'none';
+            } else {
+                type1Fields.style.display = 'none';
+                type2Fields.style.display = 'block';
+            }
+            
+            const responseType = document.getElementById('responseType').value;
+            const jsonConfigFields = document.getElementById('jsonConfigFields');
+            jsonConfigFields.style.display = responseType === 'json' ? 'block' : 'none';
+        }
+
+        function savePlatform() {
+            const token = localStorage.getItem('token');
+            const id = document.getElementById('platformId').value;
+            const type = document.getElementById('platformType').value;
+            
+            const platformData = {
+                name: document.getElementById('platformName').value,
+                platform_type: type,
+                api_url: type === 'type1' ? document.getElementById('platformUrl').value : document.getElementById('platformUrl2').value,
+                phone: document.getElementById('platformPhone').value || null,
+                response_type: document.getElementById('responseType').value,
+                phone_field: document.getElementById('phoneField').value,
+                code_field: document.getElementById('codeField').value,
+                data_path: document.getElementById('dataPath').value,
+                code_pattern: document.getElementById('codePattern').value,
+                request_interval: parseInt(document.getElementById('requestInterval').value) || 30,
+                request_headers: document.getElementById('requestHeaders').value
+            };
+            
+            if (!platformData.name) {
+                showToast('error', '错误', '请填写平台名称');
+                return;
+            }
+            
+            if (!platformData.api_url) {
+                showToast('error', '错误', '请填写API URL');
+                return;
+            }
+
+            const url = id ? 
+                `backend/api/external/platforms/index.php?id=${id}` : 
+                'backend/api/external/platforms/index.php';
+            const method = id ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(platformData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('success', '成功', id ? '平台更新成功' : '平台添加成功');
+                    closeModal('platformModal');
+                    loadPlatforms();
+                } else {
+                    showToast('error', '错误', data.message || '操作失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving platform:', error);
+                showToast('error', '错误', '保存平台失败');
+            });
+        }
+
+        function testPlatformConnection() {
+            const type = document.getElementById('platformType').value;
+            const url = type === 'type1' ? document.getElementById('platformUrl').value : document.getElementById('platformUrl2').value;
+            
+            if (!url) {
+                showToast('error', '错误', '请填写API URL');
+                return;
+            }
+            
+            showToast('info', '测试中', '正在测试连接...');
+            
+            const token = localStorage.getItem('token');
+            fetch('backend/api/external/platforms/index.php?action=test', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    api_url: url,
+                    request_headers: document.getElementById('requestHeaders').value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('success', '成功', '连接测试成功');
+                } else {
+                    showToast('error', '失败', data.message || '连接测试失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error testing platform:', error);
+                showToast('error', '错误', '测试连接失败');
+            });
+        }
+
+        function testPlatform(id) {
+            const token = localStorage.getItem('token');
+            showToast('info', '测试中', '正在测试平台连接...');
+            
+            fetch(`backend/api/external/platforms/index.php?action=test&id=${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('success', '成功', '连接测试成功');
+                } else {
+                    showToast('error', '失败', data.message || '连接测试失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error testing platform:', error);
+                showToast('error', '错误', '测试连接失败');
+            });
+        }
+
+        function fetchPlatformCodes(id) {
+            const token = localStorage.getItem('token');
+            showToast('info', '获取中', '正在从平台获取验证码...');
+            
+            fetch(`backend/api/external/platforms/index.php?action=fetch&id=${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const count = data.data ? data.data.length : 0;
+                    showToast('success', '成功', `获取到 ${count} 条验证码`);
+                    loadMonitors();
+                } else {
+                    showToast('error', '失败', data.message || '获取验证码失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching codes:', error);
+                showToast('error', '错误', '获取验证码失败');
+            });
+        }
+
+        function togglePlatformStatus(id, currentStatus) {
+            const token = localStorage.getItem('token');
+            const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+            
+            fetch(`backend/api/external/platforms/index.php?id=${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('success', '成功', `平台已${newStatus === 'active' ? '启用' : '禁用'}`);
+                    loadPlatforms();
+                } else {
+                    showToast('error', '错误', data.message || '操作失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling platform status:', error);
+                showToast('error', '错误', '操作失败');
+            });
+        }
+
+        function deletePlatform(id) {
+            if (!confirm('确定要删除此外部平台吗？删除后无法恢复。')) {
+                return;
+            }
+            
+            const token = localStorage.getItem('token');
+            
+            fetch(`backend/api/external/platforms/index.php?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('success', '成功', '外部平台已删除');
+                    loadPlatforms();
+                } else {
+                    showToast('error', '错误', data.message || '删除失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting platform:', error);
+                showToast('error', '错误', '删除外部平台失败');
+            });
         }
 
         // Close modal on overlay click
@@ -2994,6 +6151,97 @@
             }
         });
     </script>
+
+    <!-- Edit Platform Modal -->
+    <div class="modal-overlay" id="editPlatformModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">编辑平台</h3>
+                <button class="modal-close" onclick="closeModal('editPlatformModal')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form onsubmit="event.preventDefault(); saveEditPlatform();">
+                <div class="modal-body">
+                    <input type="hidden" id="editPlatformId">
+                    <div class="form-group">
+                        <label class="form-label">平台名称 *</label>
+                        <input type="text" class="form-input" id="editPlatformName" placeholder="输入平台名称">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">平台类型</label>
+                        <select class="form-input" id="editPlatformType">
+                            <option value="type1">类型1</option>
+                            <option value="type2">类型2</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">API地址 *</label>
+                        <input type="text" class="form-input" id="editPlatformUrl" placeholder="输入API地址">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">请求间隔(秒)</label>
+                        <input type="number" class="form-input" id="editPlatformInterval" value="30" min="5">
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="editPlatformActive" checked>
+                            <span>启用平台</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editPlatformModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Webhook Modal -->
+    <div class="modal-overlay" id="editWebhookModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">编辑Webhook</h3>
+                <button class="modal-close" onclick="closeModal('editWebhookModal')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form onsubmit="event.preventDefault(); saveEditWebhook();">
+                <div class="modal-body">
+                    <input type="hidden" id="editWebhookId">
+                    <div class="form-group">
+                        <label class="form-label">名称 *</label>
+                        <input type="text" class="form-input" id="editWebhookName" placeholder="输入Webhook名称">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">URL *</label>
+                        <input type="text" class="form-input" id="editWebhookUrl" placeholder="输入Webhook URL">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">密钥(可选)</label>
+                        <input type="text" class="form-input" id="editWebhookSecret" placeholder="输入密钥">
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="editWebhookActive" checked>
+                            <span>启用Webhook</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editWebhookModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Change Password Modal -->
     <div class="modal-overlay" id="changePasswordModal">

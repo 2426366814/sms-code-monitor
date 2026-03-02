@@ -3,274 +3,417 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注册 - 多用户动态验证码监控系统</title>
+    <title>注册 - 验证码监控平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
+        :root {
+            --primary: #4ade80;
+            --primary-dark: #22c55e;
+            --primary-light: rgba(74, 222, 128, 0.1);
+            --secondary: #60a5fa;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --bg-base: #0f172a;
+            --bg-glass: rgba(30, 41, 59, 0.8);
+            --bg-glass-light: rgba(51, 65, 85, 0.6);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --blur-glass: blur(20px);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-base);
+            background-image: 
+                radial-gradient(ellipse at top left, rgba(74, 222, 128, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(96, 165, 250, 0.15) 0%, transparent 50%);
             padding: 20px;
+            position: relative;
+            overflow: hidden;
         }
-        
-        .container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            padding: 40px;
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(74, 222, 128, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 40% 40%, rgba(167, 139, 250, 0.05) 0%, transparent 30%);
+            animation: bgFloat 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, 2%) rotate(1deg); }
+            66% { transform: translate(-1%, 1%) rotate(-1deg); }
+        }
+
+        .register-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 440px;
+            position: relative;
+            z-index: 1;
         }
-        
-        .logo {
+
+        .register-card {
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-glass);
+            -webkit-backdrop-filter: var(--blur-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            animation: cardAppear 0.6s ease-out;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
         }
-        
-        .logo h1 {
-            color: #333;
-            font-size: 24px;
-            font-weight: bold;
+
+        .register-logo {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);
         }
-        
+
+        .register-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .register-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
-        
-        .form-group label {
+
+        .form-label {
             display: block;
-            margin-bottom: 8px;
-            color: #555;
+            font-size: 13px;
             font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #4CAF50;
-        }
-        
-        .form-group.password {
+
+        .form-input-wrapper {
             position: relative;
         }
-        
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 40px;
-            cursor: pointer;
-            color: #999;
-        }
-        
-        .btn {
+
+        .form-input {
             width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
+            color: var(--text-muted);
             cursor: pointer;
-            transition: background-color 0.3s;
+            padding: 4px;
+            transition: var(--transition);
         }
-        
-        .btn:hover {
-            background-color: #45a049;
+
+        .password-toggle:hover {
+            color: var(--text-primary);
         }
-        
-        .links {
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .links a {
-            color: #4CAF50;
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
             text-decoration: none;
         }
-        
-        .links a:hover {
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #0f172a;
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .form-footer {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .form-footer a:hover {
+            color: var(--secondary);
             text-decoration: underline;
         }
-        
-        .error-message {
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 10px;
-            border-radius: 4px;
+
+        .alert {
+            padding: 14px 16px;
+            border-radius: var(--radius);
             margin-bottom: 20px;
+            font-size: 14px;
             display: none;
         }
-        
-        .success-message {
-            background-color: #e8f5e8;
-            color: #2e7d32;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            display: none;
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
         }
-        
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
         }
-        
-        .loading::after {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #4CAF50;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+            z-index: 10;
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .back-home:hover {
+            color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 480px) {
+            .register-card {
+                padding: 32px 24px;
+            }
+            
+            .register-title {
+                font-size: 24px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <h1>多用户动态验证码监控系统</h1>
-        </div>
-        
-        <div class="error-message" id="errorMessage"></div>
-        <div class="success-message" id="successMessage"></div>
-        
-        <form id="registerForm">
-            <div class="form-group">
-                <label for="username">用户名</label>
-                <input type="text" id="username" name="username" placeholder="请输入用户名" autocomplete="username" required>
+    <a href="index.html" class="back-home">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        返回首页
+    </a>
+
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <div class="register-logo">📱</div>
+                <h1 class="register-title">验证码监控平台</h1>
+                <p class="register-subtitle">创建您的账户</p>
             </div>
-            
-            <div class="form-group">
-                <label for="email">邮箱</label>
-                <input type="email" id="email" name="email" placeholder="请输入邮箱" autocomplete="email" required>
+
+            <div class="alert alert-error" id="errorMessage"></div>
+            <div class="alert alert-success" id="successMessage"></div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label class="form-label">用户名</label>
+                    <div class="form-input-wrapper">
+                        <input type="text" class="form-input" id="username" placeholder="请输入用户名" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">邮箱地址</label>
+                    <div class="form-input-wrapper">
+                        <input type="email" class="form-input" id="email" placeholder="请输入邮箱" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">密码</label>
+                        <div class="form-input-wrapper">
+                            <input type="password" class="form-input" id="password" placeholder="请输入密码" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">确认密码</label>
+                        <div class="form-input-wrapper">
+                            <input type="password" class="form-input" id="confirmPassword" placeholder="再次输入密码" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">注 册</button>
+            </form>
+
+            <div class="form-footer">
+                <a href="login.html">已有账户？立即登录</a>
             </div>
-            
-            <div class="form-group password">
-                <label for="password">密码</label>
-                <input type="password" id="password" name="password" placeholder="请输入密码（至少6位）" autocomplete="new-password" required minlength="6">
-                <span class="toggle-password" onclick="togglePassword('password')">👁️</span>
-            </div>
-            
-            <div class="form-group password">
-                <label for="confirmPassword">确认密码</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="请再次输入密码" autocomplete="new-password" required>
-                <span class="toggle-password" onclick="togglePassword('confirmPassword')">👁️</span>
-            </div>
-            
-            <button type="submit" class="btn">注册</button>
-            
-            <div class="loading" id="loading"></div>
-        </form>
-        
-        <div class="links">
-            <a href="login.html">已有账号？立即登录</a>
         </div>
     </div>
-    
+
     <script>
-        function togglePassword(inputId) {
-            const passwordInput = document.getElementById(inputId);
-            const toggleBtn = passwordInput.parentElement.querySelector('.toggle-password');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleBtn.textContent = '👁️‍🗨️';
-            } else {
-                passwordInput.type = 'password';
-                toggleBtn.textContent = '👁️';
-            }
-        }
-        
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-            const errorMessage = document.getElementById('errorMessage');
-            const successMessage = document.getElementById('successMessage');
-            const loading = document.getElementById('loading');
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
             
-            // 重置消息
-            errorMessage.style.display = 'none';
-            successMessage.style.display = 'none';
-            
-            // 验证密码
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
             if (password !== confirmPassword) {
-                errorMessage.textContent = '两次输入的密码不一致';
-                errorMessage.style.display = 'block';
+                errorDiv.textContent = '两次输入的密码不一致';
+                errorDiv.style.display = 'block';
                 return;
             }
-            
+
             if (password.length < 6) {
-                errorMessage.textContent = '密码长度至少为6位';
-                errorMessage.style.display = 'block';
+                errorDiv.textContent = '密码长度至少6位';
+                errorDiv.style.display = 'block';
                 return;
             }
-            
-            loading.style.display = 'block';
-            
-            // 发送注册请求
-            fetch('backend/api/auth/index.php/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: username,
-                    email: email,
-                    password: password
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                loading.style.display = 'none';
-                
+
+            try {
+                const response = await fetch('backend/api/auth/index.php?path=register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
                 if (data.success) {
-                    successMessage.textContent = '注册成功！即将跳转到登录页面...';
-                    successMessage.style.display = 'block';
+                    successDiv.textContent = '注册成功！正在跳转到登录页面...';
+                    successDiv.style.display = 'block';
                     
-                    // 跳转到登录页
                     setTimeout(() => {
-                        window.location.href = 'login.html';
+                        window.location.href = 'login.html?registered=true';
                     }, 1500);
                 } else {
-                    errorMessage.textContent = data.message || '注册失败';
-                    errorMessage.style.display = 'block';
+                    errorDiv.textContent = data.message || '注册失败，请稍后重试';
+                    errorDiv.style.display = 'block';
                 }
-            })
-            .catch(error => {
-                loading.style.display = 'none';
-                errorMessage.textContent = '注册失败，请稍后重试';
-                errorMessage.style.display = 'block';
-                console.error('Error:', error);
-            });
+            } catch (error) {
+                console.error('Register error:', error);
+                errorDiv.textContent = '注册失败，请稍后重试';
+                errorDiv.style.display = 'block';
+            }
         });
     </script>
 </body>

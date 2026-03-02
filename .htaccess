@@ -1,0 +1,11 @@
+DirectoryIndex home.html index.html
+
+RewriteEngine On
+
+# Redirect root to home.html
+RewriteRule ^$ home.html [L]
+
+# API routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^backend/api/(.*)$ backend/api/$1 [L]

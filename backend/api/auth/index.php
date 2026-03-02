@@ -26,8 +26,21 @@ $response = new Response();
 // 获取请求方法
 $method = $_SERVER['REQUEST_METHOD'];
 
-// 获取请求路径
-$path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
+// 获取请求路径 - 支持多种方式
+$path = '';
+if (isset($_GET['action'])) {
+    $path = $_GET['action'];
+} elseif (isset($_GET['path'])) {
+    $path = $_GET['path'];
+} elseif (isset($_SERVER['PATH_INFO'])) {
+    $path = trim($_SERVER['PATH_INFO'], '/');
+} elseif (isset($_SERVER['REQUEST_URI'])) {
+    $uri = $_SERVER['REQUEST_URI'];
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+    if ($scriptName && strpos($uri, $scriptName) === 0) {
+        $path = substr($uri, strlen($scriptName) + 1);
+    }
+}
 $path = trim($path, '/');
 $parts = explode('/', $path);
 
@@ -415,6 +428,7 @@ function getCurrentUser($jwt, $userModel, $response) {
             'username' => $user['username'],
             'email' => $user['email'],
             'status' => $user['status'],
+            'is_admin' => (bool)($user['is_admin'] ?? false),
             'last_login' => $user['last_login'],
             'created_at' => $user['created_at']
         ]);

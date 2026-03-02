@@ -104,9 +104,9 @@ function getCodes($payload, $database) {
         // 计算偏移量
         $offset = ($page - 1) * $limit;
         
-        // 构建查询
-        $query = "SELECT c.id, c.monitor_id, c.code, c.original_text, c.extracted_time, c.created_at " .
-                 "FROM codes c " .
+        // 构建查询 - 使用 verification_codes 表
+        $query = "SELECT c.id, c.monitor_id, c.phone, c.code, c.message as original_text, c.source_url, c.received_at as extracted_time, c.created_at " .
+                 "FROM verification_codes c " .
                  "JOIN monitors m ON c.monitor_id = m.id " .
                  "WHERE m.user_id = ?";
         $params = [$payload['user_id']];
@@ -118,7 +118,7 @@ function getCodes($payload, $database) {
         }
         
         // 添加排序和分页
-        $query .= " ORDER BY c.extracted_time DESC LIMIT ? OFFSET ?";
+        $query .= " ORDER BY c.received_at DESC LIMIT ? OFFSET ?";
         $params[] = $limit;
         $params[] = $offset;
         
@@ -126,7 +126,7 @@ function getCodes($payload, $database) {
         $codes = $database->fetchAll($query, $params);
         
         // 获取总数
-        $countQuery = "SELECT COUNT(*) as count FROM codes c JOIN monitors m ON c.monitor_id = m.id WHERE m.user_id = ?";
+        $countQuery = "SELECT COUNT(*) as count FROM verification_codes c JOIN monitors m ON c.monitor_id = m.id WHERE m.user_id = ?";
         $countParams = [$payload['user_id']];
         
         if ($monitorId) {
@@ -165,9 +165,9 @@ function exportCodes($payload, $database) {
         $startTime = isset($data['start_time']) ? $data['start_time'] : '';
         $endTime = isset($data['end_time']) ? $data['end_time'] : '';
         
-        // 构建查询
-        $query = "SELECT c.id, c.monitor_id, c.code, c.original_text, c.extracted_time, c.created_at " .
-                 "FROM codes c " .
+        // 构建查询 - 使用 verification_codes 表
+        $query = "SELECT c.id, c.monitor_id, c.phone, c.code, c.message as original_text, c.source_url, c.received_at as extracted_time, c.created_at " .
+                 "FROM verification_codes c " .
                  "JOIN monitors m ON c.monitor_id = m.id " .
                  "WHERE m.user_id = ?";
         $params = [$payload['user_id']];
@@ -181,16 +181,16 @@ function exportCodes($payload, $database) {
         
         // 添加时间范围过滤
         if ($startTime) {
-            $query .= " AND c.created_at >= ?";
+            $query .= " AND c.received_at >= ?";
             $params[] = $startTime;
         }
         if ($endTime) {
-            $query .= " AND c.created_at <= ?";
+            $query .= " AND c.received_at <= ?";
             $params[] = $endTime;
         }
         
         // 添加排序
-        $query .= " ORDER BY c.created_at DESC";
+        $query .= " ORDER BY c.received_at DESC";
         
         // 执行查询
         $codes = $database->fetchAll($query, $params);

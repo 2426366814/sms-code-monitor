@@ -3,40 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="管理员后台 - 多用户动态验证码监控系统管理面板">
+    <meta name="keywords" content="管理员,后台,验证码监控,系统管理">
+    <meta name="author" content="Multi-User SMS Monitor">
+    <meta name="robots" content="noindex, nofollow">
     <title>管理员后台 - 多用户动态验证码监控系统</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
         :root {
-            --primary: #4CAF50;
-            --primary-dark: #45a049;
-            --primary-light: #e8f5e9;
-            --danger: #f44336;
-            --danger-dark: #d32f2f;
-            --warning: #ff9800;
-            --info: #2196F3;
-            --success: #4CAF50;
-            --bg-primary: #f5f7fa;
-            --bg-secondary: #ffffff;
-            --text-primary: #333333;
-            --text-secondary: #666666;
-            --text-muted: #999999;
-            --border: #e0e0e0;
-            --shadow: 0 2px 8px rgba(0,0,0,0.1);
-            --shadow-lg: 0 4px 16px rgba(0,0,0,0.15);
-            --radius: 8px;
-            --radius-lg: 12px;
-            --sidebar-width: 260px;
-            --header-height: 64px;
+            --primary: #4ade80;
+            --primary-dark: #22c55e;
+            --primary-light: rgba(74, 222, 128, 0.1);
+            --secondary: #60a5fa;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --warning: #f59e0b;
+            --info: #60a5fa;
+            --success: #10b981;
+            --bg-base: #0f172a;
+            --bg-primary: #0f172a;
+            --bg-secondary: rgba(30, 41, 59, 0.8);
+            --bg-glass: rgba(30, 41, 59, 0.8);
+            --bg-glass-light: rgba(51, 65, 85, 0.6);
+            --bg-tertiary: rgba(51, 65, 85, 0.4);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: rgba(255, 255, 255, 0.1);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --blur-glass: blur(20px);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --sidebar-width: 300px;
+            --header-height: 80px;
         }
 
         [data-theme="dark"] {
-            --bg-primary: #1a1a2e;
-            --bg-secondary: #16213e;
-            --text-primary: #eaeaea;
-            --text-secondary: #a0a0a0;
-            --text-muted: #666666;
-            --border: #2d3748;
-            --shadow: 0 2px 8px rgba(0,0,0,0.3);
-            --shadow-lg: 0 4px 16px rgba(0,0,0,0.4);
+            --bg-primary: #0f172a;
+            --bg-secondary: rgba(30, 41, 59, 0.8);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         * {
@@ -47,9 +62,13 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-primary);
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(ellipse at top left, rgba(74, 222, 128, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(96, 165, 250, 0.15) 0%, transparent 50%);
             color: var(--text-primary);
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         /* 布局 */
@@ -61,8 +80,10 @@
         /* 侧边栏 */
         .sidebar {
             width: var(--sidebar-width);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-glass);
+            -webkit-backdrop-filter: var(--blur-glass);
+            border-right: 1px solid var(--border-glass);
             display: flex;
             flex-direction: column;
             position: fixed;
@@ -1204,6 +1225,7 @@
             border: 0;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- Toast 容器 -->
@@ -1268,6 +1290,33 @@
                         </svg>
                         监控管理
                     </div>
+                    <div class="nav-item" onclick="navigateTo('codes', this)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                        </svg>
+                        验证码记录
+                    </div>
+                    <div class="nav-item" onclick="navigateTo('apikeys', this)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                        </svg>
+                        API密钥管理
+                    </div>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">数据统计</div>
+                    <div class="nav-item" onclick="navigateTo('statistics', this)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        统计分析
+                    </div>
+                    <div class="nav-item" onclick="navigateTo('logs', this)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        系统日志
+                    </div>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">工具</div>
@@ -1276,6 +1325,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                         </svg>
                         批量添加手机号
+                    </div>
+                    <div class="nav-item" onclick="navigateTo('platforms', this)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                        </svg>
+                        平台管理
                     </div>
                 </div>
                 <div class="nav-section">
@@ -1591,23 +1646,256 @@
                             <h3 class="card-title">功能说明</h3>
                         </div>
                         <div class="card-body">
-                            <div class="alert alert-info" style="background: #e3f2fd; border: 1px solid #2196F3; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                            <div class="alert alert-info" style="background: rgba(96, 165, 250, 0.1); border: 1px solid rgba(96, 165, 250, 0.3); border-radius: 8px; padding: 20px; margin-bottom: 20px;">
                                 <div style="display: flex; align-items: center; gap: 15px;">
                                     <div style="font-size: 32px;">ℹ️</div>
                                     <div>
-                                        <h4 style="margin: 0 0 10px 0; color: #1976d2;">管理员权限说明</h4>
-                                        <p style="margin: 0; color: #555; line-height: 1.6;">
-                                            管理员账号只能<strong>查看和管理</strong>所有用户的手机号和验证码，<br>
-                                            不能添加新的手机号。<br><br>
+                                        <h4 style="margin: 0 0 10px 0; color: var(--secondary);">管理员权限说明</h4>
+                                        <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">
+                                            管理员账号只能<strong>查看和管理</strong>所有用户的手机号和验证码，                                            不能添加新的手机号。<br><br>
                                             如需添加手机号，请使用<strong>普通用户账号</strong>登录后操作。
                                         </p>
                                     </div>
                                 </div>
                             </div>
-                            <div style="text-align: center; padding: 40px; background: #f5f5f5; border-radius: 8px;">
-                                <div style="font-size: 48px; margin-bottom: 15px;">👤</div>
-                                <h3 style="margin: 0 0 10px 0; color: #333;">普通用户功能</h3>
-                                <p style="margin: 0; color: #666;">添加手机号功能仅对普通用户开放</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 验证码记录 -->
+                <div id="page-codes" class="page-content hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">验证码记录</h1>
+                        <p class="page-subtitle">查看所有验证码记录</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                                <div class="search-box">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    <input type="text" id="codeSearchInput" placeholder="搜索手机号或验证码..." onkeyup="searchCodes()" aria-label="搜索手机号或验证码">
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-secondary" onclick="refreshCodes()">刷新</button>
+                                    <button class="btn btn-danger" onclick="clearOldCodes()">清理过期验证码</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>手机号</th>
+                                                <th>验证码</th>
+                                                <th>来源</th>
+                                                <th>用户</th>
+                                                <th>接收时间</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="codesTable">
+                                            <tr>
+                                                <td colspan="7" style="text-align: center; padding: 40px;">加载中...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="pagination" id="codesPagination"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API密钥管理 -->
+                <div id="page-apikeys" class="page-content hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">API密钥管理</h1>
+                        <p class="page-subtitle">管理所有用户的API密钥</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                                <div class="search-box">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    <input type="text" id="apikeySearchInput" placeholder="搜索API密钥或用户..." onkeyup="searchApiKeys()" aria-label="搜索API密钥或用户">
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn btn-secondary" onclick="refreshApiKeys()">刷新</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>用户</th>
+                                                <th>名称</th>
+                                                <th>API Key</th>
+                                                <th>状态</th>
+                                                <th>创建时间</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="apikeysTable">
+                                            <tr>
+                                                <td colspan="7" style="text-align: center; padding: 40px;">加载中...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="pagination" id="apikeysPagination"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 统计分析 -->
+                <div id="page-statistics" class="page-content hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">统计分析</h1>
+                        <p class="page-subtitle">系统数据统计与分析</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon green">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statTodayCodesCount">0</div>
+                            <div class="stat-label">今日验证码总数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon blue">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statWeekCodesCount">0</div>
+                            <div class="stat-label">本周验证码总数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon orange">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statMonthCodesCount">0</div>
+                            <div class="stat-label">本月验证码总数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon purple">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statActiveUsersCount">0</div>
+                            <div class="stat-label">活跃用户数</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">验证码趋势</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="codesChart" style="height: 300px;">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 系统日志 -->
+                <div id="page-logs" class="page-content hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">系统日志</h1>
+                        <p class="page-subtitle">查看系统操作日志</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-actions">
+                                <button class="btn btn-secondary" onclick="refreshLogs()">刷新</button>
+                                <button class="btn btn-danger" onclick="clearLogs()">清理日志</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>时间</th>
+                                            <th>用户</th>
+                                            <th>操作</th>
+                                            <th>详情</th>
+                                            <th>IP</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="logsTable">
+                                        <tr>
+                                            <td colspan="5" style="text-align: center; padding: 40px;">暂无日志记录</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="pagination" id="logsPagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 平台管理 -->
+                <div id="page-platforms" class="page-content hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">平台管理</h1>
+                        <p class="page-subtitle">管理外部平台配置</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-actions">
+                                <button class="btn btn-primary" onclick="showAddPlatformModal()">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    添加平台
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>平台名称</th>
+                                            <th>API地址</th>
+                                            <th>状态</th>
+                                            <th>创建时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="platformsTable">
+                                        <tr>
+                                            <td colspan="6" style="text-align: center; padding: 40px;">加载中...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -1786,14 +2074,63 @@
         let monitorsData = [];
 
         // 页面初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             if (token) {
-                showApp();
+                // 验证是否是管理员
+                await verifyAdminAccess();
             } else {
                 // 没有token，跳转到统一登录页面
                 window.location.href = 'login.html';
             }
         });
+
+        // 验证管理员权限
+        async function verifyAdminAccess() {
+            // 重新获取最新的token
+            token = localStorage.getItem('admin_token') || localStorage.getItem('token');
+            
+            if (!token) {
+                localStorage.removeItem('admin_token');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/index.php?path=me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    currentUser = data.data;
+                    // 检查是否是管理员
+                    if (!currentUser.is_admin) {
+                        showToast('error', '访问被拒绝', '您没有管理员权限');
+                        localStorage.removeItem('admin_token');
+                        localStorage.removeItem('token');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1500);
+                        return;
+                    }
+                    document.getElementById('sidebarUsername').textContent = currentUser.username || '管理员';
+                    showApp();
+                } else {
+                    // Token无效，跳转登录
+                    localStorage.removeItem('admin_token');
+                    localStorage.removeItem('token');
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                console.error('验证管理员权限失败:', error);
+                localStorage.removeItem('admin_token');
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+            }
+        }
 
         // 显示登录页
         function showLogin() {
@@ -1818,7 +2155,7 @@
             showLoading();
 
             try {
-                const response = await fetch(`${API_BASE_URL}/auth/index.php/login`, {
+                const response = await fetch(`${API_BASE_URL}/auth/index.php?path=login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1876,27 +2213,55 @@
             });
 
             // 显示目标页面
-            document.getElementById(`page-${page}`).classList.remove('hidden');
+            const targetPage = document.getElementById(`page-${page}`);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
 
             // 更新面包屑
             const pageNames = {
                 'dashboard': '控制面板',
                 'users': '用户管理',
                 'monitors': '监控管理',
+                'codes': '验证码记录',
+                'apikeys': 'API密钥管理',
+                'statistics': '统计分析',
+                'logs': '系统日志',
+                'platforms': '平台管理',
                 'batch-phones': '批量添加手机号',
                 'settings': '系统设置'
             };
             document.getElementById('pageBreadcrumb').textContent = pageNames[page] || page;
 
             // 加载页面数据
-            if (page === 'dashboard') {
-                loadDashboardStats();
-            } else if (page === 'users') {
-                loadUsers(1);
-            } else if (page === 'monitors') {
-                loadMonitors(1);
-            } else if (page === 'settings') {
-                loadSystemInfo();
+            switch(page) {
+                case 'dashboard':
+                    loadDashboardStats();
+                    break;
+                case 'users':
+                    loadUsers(1);
+                    break;
+                case 'monitors':
+                    loadMonitors(1);
+                    break;
+                case 'codes':
+                    loadCodes(1);
+                    break;
+                case 'apikeys':
+                    loadApiKeys(1);
+                    break;
+                case 'statistics':
+                    loadStatistics();
+                    break;
+                case 'logs':
+                    loadLogs(1);
+                    break;
+                case 'platforms':
+                    loadPlatforms();
+                    break;
+                case 'settings':
+                    loadSystemInfo();
+                    break;
             }
 
             // 移动端关闭侧边栏
@@ -2498,7 +2863,7 @@
 
             showLoading();
             try {
-                const response = await fetch(`${API_BASE_URL}/bulk/index.php/phones`, {
+                const response = await fetch(`${API_BASE_URL}/bulk/index.php?path=phones`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2714,6 +3079,431 @@
             html += `<button class="pagination-btn" onclick="${loadFunction.name}(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>下一页</button>`;
 
             container.innerHTML = html;
+        }
+
+        // 加载验证码记录
+        async function loadCodes(page = 1) {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/index.php?action=codes&page=${page}&limit=20`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderCodesTable(data.data.list || []);
+                    renderPagination('codesPagination', data.data.total || 0, page, loadCodes);
+                }
+            } catch (error) {
+                console.error('加载验证码失败:', error);
+                document.getElementById('codesTable').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--danger);">加载失败</td></tr>';
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderCodesTable(codes) {
+            const tbody = document.getElementById('codesTable');
+            if (!codes.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">暂无验证码记录</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = codes.map(code => `
+                <tr>
+                    <td>${code.id}</td>
+                    <td>${code.phone || '-'}</td>
+                    <td><code style="background: rgba(74, 222, 128, 0.1); padding: 2px 8px; border-radius: 4px; color: var(--primary);">${code.code || '-'}</code></td>
+                    <td>${code.source_url || '-'}</td>
+                    <td>${code.username || '-'}</td>
+                    <td>${code.created_at || '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="copyCode('${code.code}')">复制</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function searchCodes() {
+            const query = document.getElementById('codeSearchInput').value.trim();
+            if (!query) {
+                loadCodes(1);
+                return;
+            }
+            showLoading();
+            fetch(`${API_BASE_URL}/admin/index.php?action=codes&phone=${encodeURIComponent(query)}&limit=20`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    renderCodesTable(data.data.list || []);
+                    renderPagination('codesPagination', data.data.total || 0, 1, loadCodes);
+                }
+            })
+            .catch(err => showToast('error', '错误', '搜索失败'))
+            .finally(() => hideLoading());
+        }
+
+        function refreshCodes() {
+            document.getElementById('codeSearchInput').value = '';
+            loadCodes(1);
+            showToast('success', '成功', '数据已刷新');
+        }
+
+        function copyCode(code) {
+            navigator.clipboard.writeText(code);
+            showToast('success', '成功', '验证码已复制');
+        }
+
+        async function clearOldCodes() {
+            if (!confirm('确定要清理7天前的过期验证码吗？')) return;
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/index.php?action=clear-old-codes`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast('success', '成功', `已清理 ${data.data.deleted || 0} 条过期验证码`);
+                    loadCodes(1);
+                } else {
+                    showToast('error', '错误', data.message || '清理失败');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 加载API密钥
+        async function loadApiKeys(page = 1) {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/index.php?action=all-apikeys&page=${page}&limit=20`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderApiKeysTable(data.data.list || []);
+                    renderPagination('apikeysPagination', data.data.total || 0, page, loadApiKeys);
+                }
+            } catch (error) {
+                console.error('加载API密钥失败:', error);
+                document.getElementById('apikeysTable').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--danger);">加载失败</td></tr>';
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderApiKeysTable(keys) {
+            const tbody = document.getElementById('apikeysTable');
+            if (!keys.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">暂无API密钥</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = keys.map(key => `
+                <tr>
+                    <td>${key.id}</td>
+                    <td>${key.username || '-'}</td>
+                    <td>${key.name || '-'}</td>
+                    <td><code style="background: rgba(96, 165, 250, 0.1); padding: 2px 8px; border-radius: 4px;">${key.api_key_masked || (key.api_key ? key.api_key.substring(0, 20) + '...' : '-')}</code></td>
+                    <td><span class="badge ${key.status === 'active' ? 'badge-success' : 'badge-danger'}">${key.status === 'active' ? '活跃' : '禁用'}</span></td>
+                    <td>${key.created_at || '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="toggleApiKey(${key.id})">${key.status === 'active' ? '禁用' : '启用'}</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteApiKey(${key.id})">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function searchApiKeys() {
+            const query = document.getElementById('apikeySearchInput').value.trim();
+            if (!query) {
+                loadApiKeys(1);
+                return;
+            }
+            // 搜索API密钥（前端过滤）
+            showLoading();
+            fetch(`${API_BASE_URL}/admin/index.php?action=all-apikeys&limit=100`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const filtered = (data.data.list || []).filter(k => 
+                        (k.username || '').toLowerCase().includes(query.toLowerCase()) ||
+                        (k.name || '').toLowerCase().includes(query.toLowerCase()) ||
+                        (k.api_key || '').toLowerCase().includes(query.toLowerCase())
+                    );
+                    renderApiKeysTable(filtered);
+                }
+            })
+            .catch(err => showToast('error', '错误', '搜索失败'))
+            .finally(() => hideLoading());
+        }
+
+        function refreshApiKeys() {
+            document.getElementById('apikeySearchInput').value = '';
+            loadApiKeys(1);
+            showToast('success', '成功', '数据已刷新');
+        }
+
+        async function deleteApiKey(id) {
+            if (!confirm('确定要删除此API密钥吗？')) return;
+            
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/index.php?action=delete-apikey&id=${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('success', '成功', 'API密钥已删除');
+                    loadApiKeys(1);
+                } else {
+                    showToast('error', '错误', data.message || '删除失败');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function toggleApiKey(id) {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/index.php?action=toggle-apikey&id=${id}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('success', '成功', '状态已更新');
+                    loadApiKeys(1);
+                } else {
+                    showToast('error', '错误', data.message || '操作失败');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 加载统计数据
+        let trendChart = null;
+        async function loadStatistics() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/index.php?action=statistics`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('statTodayCodesCount').textContent = data.data.today_codes || 0;
+                    document.getElementById('statWeekCodesCount').textContent = data.data.week_codes || 0;
+                    document.getElementById('statMonthCodesCount').textContent = data.data.month_codes || 0;
+                    document.getElementById('statActiveUsersCount').textContent = data.data.active_users || 0;
+                    
+                    // 渲染趋势图表
+                    if (data.data.daily_trend && data.data.daily_trend.length > 0) {
+                        renderTrendChart(data.data.daily_trend);
+                    }
+                }
+            } catch (error) {
+                console.error('加载统计数据失败:', error);
+            }
+        }
+        
+        function renderTrendChart(trendData) {
+            const ctx = document.getElementById('trendChart');
+            if (!ctx) return;
+            
+            if (trendChart) {
+                trendChart.destroy();
+            }
+            
+            const labels = trendData.map(d => d.date.substring(5)); // MM-DD格式
+            const values = trendData.map(d => d.count);
+            
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '验证码数量',
+                        data: values,
+                        borderColor: '#4ade80',
+                        backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#4ade80',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 加载系统日志
+        async function loadLogs(page = 1) {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/index.php?action=logs&page=${page}&limit=50`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderLogsTable(data.data.list || []);
+                    renderPagination('logsPagination', data.data.total || 0, page, loadLogs);
+                }
+            } catch (error) {
+                console.error('加载日志失败:', error);
+                document.getElementById('logsTable').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">加载失败</td></tr>';
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderLogsTable(logs) {
+            const tbody = document.getElementById('logsTable');
+            if (!logs.length) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">暂无日志记录</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = logs.map(log => `
+                <tr>
+                    <td>${log.created_at || '-'}</td>
+                    <td>${log.username || log.user_id || '系统'}</td>
+                    <td>${log.action || '-'}</td>
+                    <td>${log.details || '-'}</td>
+                    <td>${log.ip_address || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function refreshLogs() {
+            loadLogs(1);
+            showToast('success', '成功', '数据已刷新');
+        }
+
+        async function clearLogs() {
+            if (!confirm('确定要清理30天前的日志吗？')) return;
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/index.php?action=clear-logs`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast('success', '成功', `已清理 ${data.data.deleted || 0} 条日志`);
+                    loadLogs(1);
+                } else {
+                    showToast('error', '错误', data.message || '清理失败');
+                }
+            } catch (error) {
+                showToast('error', '错误', '网络错误');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 加载平台列表
+        async function loadPlatforms() {
+            showLoading();
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/index.php?action=all-platforms`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderPlatformsTable(data.data.list || []);
+                }
+            } catch (error) {
+                console.error('加载平台失败:', error);
+                document.getElementById('platformsTable').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">加载失败</td></tr>';
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderPlatformsTable(platforms) {
+            const tbody = document.getElementById('platformsTable');
+            if (!platforms.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">暂无平台配置</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = platforms.map(p => `
+                <tr>
+                    <td>${p.id}</td>
+                    <td>${p.name || '-'}</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${p.api_url || '-'}</td>
+                    <td><span class="badge ${p.is_active ? 'badge-success' : 'badge-danger'}">${p.is_active ? '正常' : '禁用'}</span></td>
+                    <td>${p.created_at || '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="editPlatform(${p.id})">编辑</button>
+                        <button class="btn btn-sm btn-danger" onclick="deletePlatform(${p.id})">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showAddPlatformModal() {
+            showToast('info', '提示', '请在用户面板中添加平台配置');
+        }
+
+        function editPlatform(id) {
+            showToast('info', '提示', '请在用户面板中编辑平台配置');
+        }
+
+        async function deletePlatform(id) {
+            if (!confirm('确定要删除此平台吗？')) return;
+            showToast('info', '提示', '请在用户面板中删除平台配置');
         }
     </script>
 </body>

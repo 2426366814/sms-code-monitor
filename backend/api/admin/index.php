@@ -133,6 +133,84 @@ if ($method === 'DELETE' && $action === 'delete-user') {
             getSystemInfo($database);
             break;
         
+        case 'codes':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            getAllCodes($database);
+            break;
+        
+        case 'all-apikeys':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            getAllApiKeys($database);
+            break;
+        
+        case 'statistics':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            getStatistics($database);
+            break;
+        
+        case 'logs':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            getSystemLogs($database);
+            break;
+        
+        case 'all-platforms':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            getAllPlatforms($database);
+            break;
+        
+        case 'delete-apikey':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            deleteApiKey($database);
+            break;
+        
+        case 'toggle-apikey':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            toggleApiKeyStatus($database);
+            break;
+        
+        case 'delete-monitor':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            deleteMonitor($database);
+            break;
+        
+        case 'clear-all-monitors':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            clearAllMonitors($database);
+            break;
+        
+        case 'save-settings':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            saveSettings($database);
+            break;
+        
+        case 'clear-old-codes':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            clearOldCodes($database);
+            break;
+        
+        case 'clear-all-data':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            clearAllData($database);
+            break;
+        
+        case 'export-all':
+            $payload = verifyAdmin($jwt);
+            if (!$payload) return;
+            exportAllData($database);
+            break;
+        
         default:
             Response::error('无效的操作', 400);
             break;
@@ -214,7 +292,7 @@ function getApiKeyCount($database) {
 function getTodayCodeCount($database) {
     try {
         $today = date('Y-m-d');
-        $query = "SELECT COUNT(*) as count FROM codes WHERE DATE(created_at) = ?";
+        $query = "SELECT COUNT(*) as count FROM verification_codes WHERE DATE(created_at) = ?";
         $result = $database->fetchOne($query, [$today]);
         $count = $result ? (int)$result['count'] : 0;
         Response::success(['count' => $count], '获取成功');
@@ -568,6 +646,437 @@ function getSystemInfo($database) {
         Response::success($info, '获取成功');
     } catch (Exception $e) {
         Response::error('获取系统信息失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 获取所有验证码记录
+ */
+function getAllCodes($database) {
+    try {
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
+        $offset = ($page - 1) * $limit;
+        $phone = isset($_GET['phone']) ? $_GET['phone'] : '';
+        
+        $whereClause = "WHERE 1=1";
+        $params = [];
+        
+        if (!empty($phone)) {
+            $whereClause .= " AND vc.phone LIKE ?";
+            $params[] = "%$phone%";
+        }
+        
+        $query = "SELECT vc.*, u.username FROM verification_codes vc 
+                  LEFT JOIN users u ON vc.user_id = u.id 
+                  $whereClause 
+                  ORDER BY vc.created_at DESC LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+        
+        $codes = $database->fetchAll($query, $params);
+        
+        $countQuery = "SELECT COUNT(*) as count FROM verification_codes vc $whereClause";
+        $countParams = [];
+        if (!empty($phone)) {
+            $countParams[] = "%$phone%";
+        }
+        $countResult = $database->fetchOne($countQuery, $countParams);
+        $total = $countResult ? (int)$countResult['count'] : 0;
+        
+        Response::success([
+            'list' => $codes,
+            'total' => $total,
+            'page' => $page,
+            'limit' => $limit
+        ], '获取成功');
+    } catch (Exception $e) {
+        Response::error('获取验证码记录失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 获取所有用户的API密钥
+ */
+function getAllApiKeys($database) {
+    try {
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
+        $offset = ($page - 1) * $limit;
+        
+        $query = "SELECT ak.*, u.username FROM api_keys ak 
+                  LEFT JOIN users u ON ak.user_id = u.id 
+                  ORDER BY ak.created_at DESC LIMIT ? OFFSET ?";
+        $apiKeys = $database->fetchAll($query, [$limit, $offset]);
+        
+        // 隐藏部分密钥
+        foreach ($apiKeys as &$key) {
+            $key['api_key_masked'] = substr($key['api_key'], 0, 8) . '...' . substr($key['api_key'], -4);
+        }
+        
+        $countQuery = "SELECT COUNT(*) as count FROM api_keys";
+        $countResult = $database->fetchOne($countQuery);
+        $total = $countResult ? (int)$countResult['count'] : 0;
+        
+        Response::success([
+            'list' => $apiKeys,
+            'total' => $total,
+            'page' => $page,
+            'limit' => $limit
+        ], '获取成功');
+    } catch (Exception $e) {
+        Response::error('获取API密钥失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 获取统计数据
+ */
+function getStatistics($database) {
+    try {
+        $today = date('Y-m-d');
+        $weekStart = date('Y-m-d', strtotime('monday this week'));
+        $monthStart = date('Y-m-01');
+        
+        // 今日验证码
+        $todayCodes = $database->fetchOne(
+            "SELECT COUNT(*) as count FROM verification_codes WHERE DATE(created_at) = ?",
+            [$today]
+        );
+        
+        // 本周验证码
+        $weekCodes = $database->fetchOne(
+            "SELECT COUNT(*) as count FROM verification_codes WHERE DATE(created_at) >= ?",
+            [$weekStart]
+        );
+        
+        // 本月验证码
+        $monthCodes = $database->fetchOne(
+            "SELECT COUNT(*) as count FROM verification_codes WHERE DATE(created_at) >= ?",
+            [$monthStart]
+        );
+        
+        // 活跃用户（7天内有活动）
+        $activeUsers = $database->fetchOne(
+            "SELECT COUNT(DISTINCT user_id) as count FROM verification_codes WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)"
+        );
+        
+        // 每日趋势（最近7天）
+        $dailyTrend = $database->fetchAll(
+            "SELECT DATE(created_at) as date, COUNT(*) as count 
+             FROM verification_codes 
+             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) 
+             GROUP BY DATE(created_at) 
+             ORDER BY date ASC"
+        );
+        
+        // 平台分布
+        $platformDistribution = $database->fetchAll(
+            "SELECT source_url as platform, COUNT(*) as count 
+             FROM verification_codes 
+             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+             GROUP BY source_url 
+             ORDER BY count DESC 
+             LIMIT 10"
+        );
+        
+        Response::success([
+            'today_codes' => (int)($todayCodes['count'] ?? 0),
+            'week_codes' => (int)($weekCodes['count'] ?? 0),
+            'month_codes' => (int)($monthCodes['count'] ?? 0),
+            'active_users' => (int)($activeUsers['count'] ?? 0),
+            'daily_trend' => $dailyTrend,
+            'platform_distribution' => $platformDistribution
+        ], '获取成功');
+    } catch (Exception $e) {
+        Response::error('获取统计数据失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 获取系统日志
+ */
+function getSystemLogs($database) {
+    try {
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 50;
+        $offset = ($page - 1) * $limit;
+        
+        // 检查日志表是否存在
+        $tableExists = $database->fetchOne("SHOW TABLES LIKE 'system_logs'");
+        
+        if (!$tableExists) {
+            // 创建日志表
+            $database->query("
+                CREATE TABLE IF NOT EXISTS system_logs (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    user_id INT NULL,
+                    username VARCHAR(50) NULL,
+                    action VARCHAR(100) NOT NULL,
+                    details TEXT NULL,
+                    ip_address VARCHAR(45) NULL,
+                    user_agent VARCHAR(255) NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_user_id (user_id),
+                    INDEX idx_action (action),
+                    INDEX idx_created_at (created_at)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ");
+            
+            Response::success([
+                'list' => [],
+                'total' => 0,
+                'page' => $page,
+                'limit' => $limit
+            ], '获取成功');
+            return;
+        }
+        
+        $query = "SELECT * FROM system_logs ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        $logs = $database->fetchAll($query, [$limit, $offset]);
+        
+        $countQuery = "SELECT COUNT(*) as count FROM system_logs";
+        $countResult = $database->fetchOne($countQuery);
+        $total = $countResult ? (int)$countResult['count'] : 0;
+        
+        Response::success([
+            'list' => $logs,
+            'total' => $total,
+            'page' => $page,
+            'limit' => $limit
+        ], '获取成功');
+    } catch (Exception $e) {
+        Response::error('获取系统日志失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 获取所有平台配置
+ */
+function getAllPlatforms($database) {
+    try {
+        $query = "SELECT sp.*, u.username FROM sms_platforms sp 
+                  LEFT JOIN users u ON sp.user_id = u.id 
+                  ORDER BY sp.created_at DESC";
+        $platforms = $database->fetchAll($query);
+        
+        // 统计
+        $stats = [
+            'total' => count($platforms),
+            'type1' => 0,
+            'type2' => 0,
+            'active' => 0
+        ];
+        
+        foreach ($platforms as $p) {
+            if ($p['platform_type'] === 'type1') $stats['type1']++;
+            if ($p['platform_type'] === 'type2') $stats['type2']++;
+            if ($p['is_active']) $stats['active']++;
+        }
+        
+        Response::success([
+            'list' => $platforms,
+            'stats' => $stats
+        ], '获取成功');
+    } catch (Exception $e) {
+        Response::error('获取平台配置失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 删除API密钥
+ */
+function deleteApiKey($database) {
+    try {
+        $keyId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        
+        if (!$keyId) {
+            Response::error('缺少API密钥ID', 400);
+            return;
+        }
+        
+        $stmt = $database->query("DELETE FROM api_keys WHERE id = ?", [$keyId]);
+        $result = $stmt->rowCount() > 0;
+        
+        if ($result) {
+            Response::success(null, 'API密钥删除成功');
+        } else {
+            Response::error('API密钥不存在', 404);
+        }
+    } catch (Exception $e) {
+        Response::error('删除API密钥失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 切换API密钥状态
+ */
+function toggleApiKeyStatus($database) {
+    try {
+        $keyId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        
+        if (!$keyId) {
+            Response::error('缺少API密钥ID', 400);
+            return;
+        }
+        
+        $key = $database->fetchOne("SELECT status FROM api_keys WHERE id = ?", [$keyId]);
+        if (!$key) {
+            Response::error('API密钥不存在', 404);
+            return;
+        }
+        
+        $newStatus = $key['status'] === 'active' ? 'inactive' : 'active';
+        $stmt = $database->query("UPDATE api_keys SET status = ? WHERE id = ?", [$newStatus, $keyId]);
+        
+        Response::success(['status' => $newStatus], '状态更新成功');
+    } catch (Exception $e) {
+        Response::error('更新状态失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 删除监控项
+ */
+function deleteMonitor($database) {
+    try {
+        $monitorId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        
+        if (!$monitorId) {
+            Response::error('缺少监控项ID', 400);
+            return;
+        }
+        
+        $database->query("DELETE FROM verification_codes WHERE monitor_id = ?", [$monitorId]);
+        $stmt = $database->query("DELETE FROM monitors WHERE id = ?", [$monitorId]);
+        $result = $stmt->rowCount() > 0;
+        
+        if ($result) {
+            Response::success(null, '监控项删除成功');
+        } else {
+            Response::error('监控项不存在', 404);
+        }
+    } catch (Exception $e) {
+        Response::error('删除监控项失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 清空所有监控项
+ */
+function clearAllMonitors($database) {
+    try {
+        $database->query("DELETE FROM verification_codes");
+        $database->query("DELETE FROM monitors");
+        Response::success(null, '所有监控项已清空');
+    } catch (Exception $e) {
+        Response::error('清空监控项失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 保存系统设置
+ */
+function saveSettings($database) {
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        if (empty($data)) {
+            Response::error('没有设置数据', 400);
+            return;
+        }
+        
+        $tableExists = $database->fetchOne("SHOW TABLES LIKE 'system_settings'");
+        
+        if (!$tableExists) {
+            $database->query("
+                CREATE TABLE IF NOT EXISTS system_settings (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    setting_key VARCHAR(100) NOT NULL UNIQUE,
+                    setting_value TEXT,
+                    description VARCHAR(255),
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ");
+        }
+        
+        foreach ($data as $key => $value) {
+            $existing = $database->fetchOne("SELECT id FROM system_settings WHERE setting_key = ?", [$key]);
+            
+            if ($existing) {
+                $database->query("UPDATE system_settings SET setting_value = ? WHERE setting_key = ?", [$value, $key]);
+            } else {
+                $database->query("INSERT INTO system_settings (setting_key, setting_value) VALUES (?, ?)", [$key, $value]);
+            }
+        }
+        
+        Response::success(null, '设置保存成功');
+    } catch (Exception $e) {
+        Response::error('保存设置失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 清理旧验证码
+ */
+function clearOldCodes($database) {
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $days = isset($data['days']) ? (int)$data['days'] : 30;
+        
+        if ($days < 1) {
+            $days = 30;
+        }
+        
+        $stmt = $database->query("DELETE FROM verification_codes WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)", [$days]);
+        $deleted = $stmt->rowCount();
+        
+        Response::success(['deleted' => $deleted], "已清理 {$deleted} 条旧验证码");
+    } catch (Exception $e) {
+        Response::error('清理验证码失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 清空所有数据
+ */
+function clearAllData($database) {
+    try {
+        $database->query("DELETE FROM verification_codes");
+        $database->query("DELETE FROM monitors");
+        $database->query("DELETE FROM api_keys");
+        $database->query("DELETE FROM sms_platforms");
+        $database->query("DELETE FROM platform_phones");
+        
+        Response::success(null, '所有数据已清空');
+    } catch (Exception $e) {
+        Response::error('清空数据失败: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * 导出所有数据
+ */
+function exportAllData($database) {
+    try {
+        $users = $database->fetchAll("SELECT id, username, email, status, is_admin, created_at FROM users");
+        $monitors = $database->fetchAll("SELECT * FROM monitors");
+        $codes = $database->fetchAll("SELECT * FROM verification_codes ORDER BY created_at DESC LIMIT 1000");
+        $apiKeys = $database->fetchAll("SELECT id, user_id, name, status, created_at FROM api_keys");
+        $platforms = $database->fetchAll("SELECT * FROM sms_platforms");
+        
+        $exportData = [
+            'export_time' => date('Y-m-d H:i:s'),
+            'users' => $users,
+            'monitors' => $monitors,
+            'codes' => $codes,
+            'api_keys' => $apiKeys,
+            'platforms' => $platforms
+        ];
+        
+        Response::success($exportData, '导出成功');
+    } catch (Exception $e) {
+        Response::error('导出数据失败: ' . $e->getMessage(), 500);
     }
 }
 ?>
