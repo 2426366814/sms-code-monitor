@@ -320,12 +320,13 @@ function batchAddMonitors($data, $payload, $monitorModel) {
  */
 function updateMonitor($data, $payload, $monitorModel) {
     try {
-        if (!isset($data['id'])) {
+        $id = $data['id'] ?? $_GET['id'] ?? null;
+        if (!$id) {
             Response::error('缺少监控ID', 400);
             return;
         }
 
-        $monitor = $monitorModel->getMonitorById($data['id']);
+        $monitor = $monitorModel->getMonitorById($id);
         if (!$monitor || $monitor['user_id'] != $payload['user_id']) {
             Response::error('监控项不存在', 404);
             return;
@@ -342,7 +343,7 @@ function updateMonitor($data, $payload, $monitorModel) {
             return;
         }
 
-        $result = $monitorModel->updateMonitor($data['id'], $updateData);
+        $result = $monitorModel->updateMonitor($id, $updateData);
         if ($result) {
             Response::success(null, '更新成功');
         } else {
