@@ -33,7 +33,7 @@
         {
           "name": "create_monitor",
           "status": "passed",
-          "monitor_id": "65"
+          "monitor_id": "74"
         },
         {
           "name": "update_monitor",
@@ -80,7 +80,7 @@
         {
           "name": "create_monitor",
           "status": "passed",
-          "monitor_id": "66"
+          "monitor_id": "75"
         },
         {
           "name": "update_monitor",
@@ -127,7 +127,7 @@
         {
           "name": "create_monitor",
           "status": "passed",
-          "monitor_id": "67"
+          "monitor_id": "76"
         },
         {
           "name": "update_monitor",
@@ -174,7 +174,7 @@
         {
           "name": "create_monitor",
           "status": "passed",
-          "monitor_id": "68"
+          "monitor_id": "77"
         },
         {
           "name": "update_monitor",
@@ -221,7 +221,7 @@
         {
           "name": "create_monitor",
           "status": "passed",
-          "monitor_id": "69"
+          "monitor_id": "78"
         },
         {
           "name": "update_monitor",
@@ -268,7 +268,7 @@
         {
           "name": "create_monitor",
           "status": "passed",
-          "monitor_id": "70"
+          "monitor_id": "79"
         },
         {
           "name": "update_monitor",
@@ -315,7 +315,7 @@
         {
           "name": "create_monitor",
           "status": "passed",
-          "monitor_id": "71"
+          "monitor_id": "80"
         },
         {
           "name": "update_monitor",

@@ -5,13 +5,19 @@
  */
 
 class JWT {
+    private $secret;
+    private $algorithm;
     private $config;
     
     /**
      * 构造函数
+     * @param string $secret JWT密钥（可选，默认从配置读取）
+     * @param string $algorithm 加密算法（可选，默认HS256）
      */
-    public function __construct() {
+    public function __construct($secret = null, $algorithm = null) {
         $this->config = require __DIR__ . '/../config/config.php';
+        $this->secret = $secret ?? $this->config['jwt']['secret'] ?? 'default_secret';
+        $this->algorithm = $algorithm ?? $this->config['jwt']['algorithm'] ?? 'HS256';
     }
     
     /**
@@ -22,11 +28,11 @@ class JWT {
      */
     public function generateToken($payload, $expiresIn = null) {
         if ($expiresIn === null) {
-            $expiresIn = $this->config['jwt']['expires_in'];
+            $expiresIn = $this->config['jwt']['expires_in'] ?? 86400;
         }
         
         $header = [
-            'alg' => $this->config['jwt']['algorithm'],
+            'alg' => $this->algorithm,
             'typ' => 'JWT'
         ];
         
@@ -39,7 +45,7 @@ class JWT {
         $signature = hash_hmac(
             'sha256',
             "{$encodedHeader}.{$encodedPayload}",
-            $this->config['jwt']['secret'],
+            $this->secret,
             true
         );
         
@@ -65,7 +71,7 @@ class JWT {
             $header = json_decode($this->base64UrlDecode($encodedHeader), true);
             $payload = json_decode($this->base64UrlDecode($encodedPayload), true);
             
-            if ($header['alg'] !== $this->config['jwt']['algorithm']) {
+            if ($header['alg'] !== $this->algorithm) {
                 return null;
             }
             
@@ -76,7 +82,7 @@ class JWT {
             $expectedSignature = hash_hmac(
                 'sha256',
                 "{$encodedHeader}.{$encodedPayload}",
-                $this->config['jwt']['secret'],
+                $this->secret,
                 true
             );
             
