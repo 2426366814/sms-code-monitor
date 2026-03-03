@@ -1,0 +1,241 @@
+{
+  "phase1": {
+    "passed": 35,
+    "failed": 0,
+    "tests": []
+  },
+  "phase2": {
+    "passed": 5,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "Create - 创建监控",
+        "passed": true,
+        "message": "ID: 95"
+      },
+      {
+        "name": "Read - 读取列表",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "Update - 更新监控",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "Delete - 删除监控",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "搜索筛选分页",
+        "passed": true,
+        "message": ""
+      }
+    ]
+  },
+  "phase3": {
+    "passed": 5,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "页面跳转 - index.html",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "页面跳转 - login.html",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "页面跳转 - health.html",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "页面跳转 - admin.html",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "表单输入测试",
+        "passed": true,
+        "message": ""
+      }
+    ]
+  },
+  "phase4": {
+    "passed": 0,
+    "failed": 1,
+    "tests": [
+      {
+        "name": "并发请求测试 (5个)",
+        "passed": false,
+        "message": "0/5成功"
+      }
+    ]
+  },
+  "phase4_5": {
+    "passed": 7,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "无token访问管理员API被拒绝",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "管理员获取用户列表",
+        "passed": true,
+        "message": "共10个用户"
+      },
+      {
+        "name": "管理员获取统计数据",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "管理员获取所有监控",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "创建测试监控",
+        "passed": true,
+        "message": "ID: 96"
+      },
+      {
+        "name": "无效Token被拒绝",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "健康检测API（无需认证）",
+        "passed": true,
+        "message": ""
+      }
+    ]
+  },
+  "phase5": {
+    "passed": 3,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "空值测试",
+        "passed": true,
+        "message": "正确拒绝"
+      },
+      {
+        "name": "SQL注入测试",
+        "passed": true,
+        "message": "正确拒绝"
+      },
+      {
+        "name": "XSS攻击测试",
+        "passed": true,
+        "message": "正确拒绝"
+      }
+    ]
+  },
+  "phase6": {
+    "passed": 4,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "服务器连接测试",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "SSL证书测试",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "数据库连接测试",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "PHP环境测试",
+        "passed": true,
+        "message": ""
+      }
+    ]
+  },
+  "phase7": {
+    "passed": 0,
+    "failed": 1,
+    "tests": [
+      {
+        "name": "标签列表API",
+        "passed": false,
+        "message": "功能未实现"
+      }
+    ]
+  },
+  "phase8": {
+    "passed": 3,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "空列表状态显示",
+        "passed": true,
+        "message": "提示: True"
+      },
+      {
+        "name": "统计数据零值处理",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "错误状态显示",
+        "passed": true,
+        "message": ""
+      }
+    ]
+  },
+  "phase9": {
+    "passed": 7,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "第1轮健康检测",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "第2轮健康检测",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "第3轮健康检测",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "第4轮健康检测",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "第5轮健康检测",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "第6轮健康检测",
+        "passed": true,
+        "message": ""
+      },
+      {
+        "name": "第7轮健康检测",
+        "passed": true,
+        "message": ""
+      }
+    ]
+  }
+}
