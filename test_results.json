@@ -1,0 +1,336 @@
+{
+  "total_passed": 70,
+  "total_failed": 0,
+  "rounds": [
+    {
+      "passed": 10,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "login_page",
+          "status": "passed"
+        },
+        {
+          "name": "login",
+          "status": "passed"
+        },
+        {
+          "name": "home_page",
+          "status": "passed"
+        },
+        {
+          "name": "health_page",
+          "status": "passed"
+        },
+        {
+          "name": "api_health",
+          "status": "passed"
+        },
+        {
+          "name": "monitors_api",
+          "status": "passed"
+        },
+        {
+          "name": "create_monitor",
+          "status": "passed",
+          "monitor_id": "65"
+        },
+        {
+          "name": "update_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "delete_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "statistics_api",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "passed": 10,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "login_page",
+          "status": "passed"
+        },
+        {
+          "name": "login",
+          "status": "passed"
+        },
+        {
+          "name": "home_page",
+          "status": "passed"
+        },
+        {
+          "name": "health_page",
+          "status": "passed"
+        },
+        {
+          "name": "api_health",
+          "status": "passed"
+        },
+        {
+          "name": "monitors_api",
+          "status": "passed"
+        },
+        {
+          "name": "create_monitor",
+          "status": "passed",
+          "monitor_id": "66"
+        },
+        {
+          "name": "update_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "delete_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "statistics_api",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "passed": 10,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "login_page",
+          "status": "passed"
+        },
+        {
+          "name": "login",
+          "status": "passed"
+        },
+        {
+          "name": "home_page",
+          "status": "passed"
+        },
+        {
+          "name": "health_page",
+          "status": "passed"
+        },
+        {
+          "name": "api_health",
+          "status": "passed"
+        },
+        {
+          "name": "monitors_api",
+          "status": "passed"
+        },
+        {
+          "name": "create_monitor",
+          "status": "passed",
+          "monitor_id": "67"
+        },
+        {
+          "name": "update_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "delete_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "statistics_api",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "passed": 10,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "login_page",
+          "status": "passed"
+        },
+        {
+          "name": "login",
+          "status": "passed"
+        },
+        {
+          "name": "home_page",
+          "status": "passed"
+        },
+        {
+          "name": "health_page",
+          "status": "passed"
+        },
+        {
+          "name": "api_health",
+          "status": "passed"
+        },
+        {
+          "name": "monitors_api",
+          "status": "passed"
+        },
+        {
+          "name": "create_monitor",
+          "status": "passed",
+          "monitor_id": "68"
+        },
+        {
+          "name": "update_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "delete_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "statistics_api",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "passed": 10,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "login_page",
+          "status": "passed"
+        },
+        {
+          "name": "login",
+          "status": "passed"
+        },
+        {
+          "name": "home_page",
+          "status": "passed"
+        },
+        {
+          "name": "health_page",
+          "status": "passed"
+        },
+        {
+          "name": "api_health",
+          "status": "passed"
+        },
+        {
+          "name": "monitors_api",
+          "status": "passed"
+        },
+        {
+          "name": "create_monitor",
+          "status": "passed",
+          "monitor_id": "69"
+        },
+        {
+          "name": "update_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "delete_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "statistics_api",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "passed": 10,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "login_page",
+          "status": "passed"
+        },
+        {
+          "name": "login",
+          "status": "passed"
+        },
+        {
+          "name": "home_page",
+          "status": "passed"
+        },
+        {
+          "name": "health_page",
+          "status": "passed"
+        },
+        {
+          "name": "api_health",
+          "status": "passed"
+        },
+        {
+          "name": "monitors_api",
+          "status": "passed"
+        },
+        {
+          "name": "create_monitor",
+          "status": "passed",
+          "monitor_id": "70"
+        },
+        {
+          "name": "update_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "delete_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "statistics_api",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "passed": 10,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "login_page",
+          "status": "passed"
+        },
+        {
+          "name": "login",
+          "status": "passed"
+        },
+        {
+          "name": "home_page",
+          "status": "passed"
+        },
+        {
+          "name": "health_page",
+          "status": "passed"
+        },
+        {
+          "name": "api_health",
+          "status": "passed"
+        },
+        {
+          "name": "monitors_api",
+          "status": "passed"
+        },
+        {
+          "name": "create_monitor",
+          "status": "passed",
+          "monitor_id": "71"
+        },
+        {
+          "name": "update_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "delete_monitor",
+          "status": "passed"
+        },
+        {
+          "name": "statistics_api",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "total_rate": 100.0
+}
