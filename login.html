@@ -354,16 +354,16 @@
 
             <form id="loginForm">
                 <div class="form-group">
-                    <label class="form-label">邮箱地址</label>
+                    <label class="form-label" for="username">邮箱或用户名</label>
                     <div class="form-input-wrapper">
-                        <input type="text" class="form-input" id="username" placeholder="请输入邮箱" required>
+                        <input type="text" class="form-input" id="username" name="username" placeholder="请输入邮箱或用户名" autocomplete="username" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">密码</label>
+                    <label class="form-label" for="password">密码</label>
                     <div class="form-input-wrapper">
-                        <input type="password" class="form-input" id="password" placeholder="请输入密码" required>
+                        <input type="password" class="form-input" id="password" name="password" placeholder="请输入密码" autocomplete="current-password" required>
                         <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
                     </div>
                 </div>
@@ -429,10 +429,12 @@
                     localStorage.setItem('token', data.data.token);
                     localStorage.setItem('user', JSON.stringify(data.data.user));
                     
-                    // 如果是管理员，同时设置admin_token
                     if (data.data.user.is_admin) {
                         localStorage.setItem('admin_token', data.data.token);
                         localStorage.setItem('admin_user', JSON.stringify(data.data.user));
+                    } else {
+                        localStorage.removeItem('admin_token');
+                        localStorage.removeItem('admin_user');
                     }
                     
                     successDiv.textContent = '登录成功！正在跳转...';

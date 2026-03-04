@@ -2165,9 +2165,19 @@
 
                 const data = await response.json();
 
-                if (data.code === 200) {
+                if (data.code === 200 || data.success) {
                     token = data.data.token;
                     currentUser = data.data.user;
+                    
+                    if (!currentUser.is_admin) {
+                        errorDiv.textContent = '访问被拒绝：您没有管理员权限';
+                        errorDiv.classList.add('show');
+                        hideLoading();
+                        return;
+                    }
+                    
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
                     localStorage.setItem('admin_token', token);
                     localStorage.setItem('admin_user', JSON.stringify(currentUser));
                     document.getElementById('sidebarUsername').textContent = currentUser.username || '管理员';

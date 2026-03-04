@@ -4016,7 +4016,10 @@ Content-Type: application/json
         let currentPage = 'dashboard';
         let autoRefreshInterval = null;
         let currentUserId = null;
-        let notifiedCodes = new Set(); // Track already notified codes
+        let notifiedCodes = new Set();
+        let ws = null;
+        let wsReconnectTimer = null;
+        let useWebSocket = true;
 
         // HTML escape function to prevent XSS
         function escapeHtml(text) {
@@ -4029,23 +4032,25 @@ Content-Type: application/json
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOMContentLoaded event fired');
-            loadTheme(); // Load saved theme
+            loadTheme();
             const token = checkAuth();
             console.log('Token from checkAuth:', token ? 'exists' : 'null');
             if (token) {
                 loadUserInfo();
                 loadMonitors();
                 loadHistory();
-                startAutoRefresh();
+                if (useWebSocket) {
+                    connectWebSocket();
+                } else {
+                    startAutoRefresh();
+                }
                 requestNotificationPermission();
                 
-                // Load notified codes from localStorage
                 const savedNotified = localStorage.getItem('notifiedCodes');
                 if (savedNotified) {
                     notifiedCodes = new Set(JSON.parse(savedNotified));
                 }
                 
-                // Clean up old codes (keep last 200)
                 cleanupOldCodes();
             }
         });
@@ -4056,6 +4061,125 @@ Content-Type: application/json
             if (codesArray.length > 200) {
                 notifiedCodes = new Set(codesArray.slice(-200));
                 localStorage.setItem('notifiedCodes', JSON.stringify(Array.from(notifiedCodes)));
+            }
+        }
+
+        // WebSocket Connection
+        function connectWebSocket() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsHost = window.location.hostname;
+            const wsPort = '8080';
+            const wsUrl = `${wsProtocol}//${wsHost}:${wsPort}?token=${token}`;
+            
+            try {
+                ws = new WebSocket(wsUrl);
+                
+                ws.onopen = function() {
+                    console.log('[WS] Connected to WebSocket server');
+                    showToast('success', 'WebSocket', '实时连接已建立');
+                    if (wsReconnectTimer) {
+                        clearTimeout(wsReconnectTimer);
+                        wsReconnectTimer = null;
+                    }
+                };
+                
+                ws.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        handleWebSocketMessage(data);
+                    } catch (error) {
+                        console.error('[WS] Error parsing message:', error);
+                    }
+                };
+                
+                ws.onclose = function(event) {
+                    console.log('[WS] Connection closed:', event.code, event.reason);
+                    if (event.code !== 1000) {
+                        scheduleReconnect();
+                    }
+                };
+                
+                ws.onerror = function(error) {
+                    console.error('[WS] Error:', error);
+                    showToast('warning', 'WebSocket', '连接失败，使用轮询模式');
+                    useWebSocket = false;
+                    startAutoRefresh();
+                };
+                
+            } catch (error) {
+                console.error('[WS] Failed to connect:', error);
+                useWebSocket = false;
+                startAutoRefresh();
+            }
+        }
+
+        function handleWebSocketMessage(data) {
+            switch (data.type) {
+                case 'connected':
+                    console.log('[WS] Server confirmed connection');
+                    if (data.data) {
+                        monitors = data.data;
+                        renderMonitors();
+                    }
+                    break;
+                    
+                case 'new_code':
+                    console.log('[WS] New code received:', data.data);
+                    handleNewCode(data.data);
+                    break;
+                    
+                case 'monitors_update':
+                    console.log('[WS] Monitors update received');
+                    monitors = data.data;
+                    renderMonitors();
+                    updateStats();
+                    break;
+                    
+                case 'pong':
+                    break;
+                    
+                case 'error':
+                    console.error('[WS] Server error:', data.message);
+                    break;
+                    
+                default:
+                    console.log('[WS] Unknown message type:', data.type);
+            }
+        }
+
+        function handleNewCode(codeData) {
+            const { phone, code, timestamp } = codeData;
+            
+            showToast('success', '收到验证码', `${phone}: ${code}`);
+            
+            showDesktopNotification('收到验证码', `${phone}: ${code}`);
+            
+            loadMonitors();
+        }
+
+        function scheduleReconnect() {
+            if (wsReconnectTimer) return;
+            
+            wsReconnectTimer = setTimeout(() => {
+                console.log('[WS] Attempting to reconnect...');
+                wsReconnectTimer = null;
+                if (useWebSocket) {
+                    connectWebSocket();
+                }
+            }, 5000);
+        }
+
+        function disconnectWebSocket() {
+            if (ws) {
+                ws.close(1000, 'User logout');
+                ws = null;
+            }
+            if (wsReconnectTimer) {
+                clearTimeout(wsReconnectTimer);
+                wsReconnectTimer = null;
             }
         }
 
@@ -5245,8 +5369,11 @@ Content-Type: application/json
         }
 
         function logout() {
+            disconnectWebSocket();
             localStorage.removeItem('token');
             localStorage.removeItem('user');
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_user');
             window.location.href = 'login.html';
         }
 
