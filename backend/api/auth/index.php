@@ -118,6 +118,12 @@ function registerUser($data, $userModel, $jwt, $response) {
         return;
     }
 
+    // 验证用户名格式 (只允许字母、数字、下划线，3-20位)
+    if (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $data['username'])) {
+        $response->error('用户名只能包含字母、数字和下划线，长度3-20位', 400);
+        return;
+    }
+
     if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
         $response->error('邮箱格式不正确', 400);
         return;
