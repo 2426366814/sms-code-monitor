@@ -4070,9 +4070,8 @@ Content-Type: application/json
             if (!token) return;
             
             const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsHost = window.location.hostname;
-            const wsPort = '8080';
-            const wsUrl = `${wsProtocol}//${wsHost}:${wsPort}?token=${token}`;
+            const wsHost = window.location.host;
+            const wsUrl = `${wsProtocol}//${wsHost}/ws?token=${token}`;
             
             try {
                 ws = new WebSocket(wsUrl);
