@@ -1252,7 +1252,10 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="loginPassword">密码</label>
-                    <input type="password" class="form-input" id="loginPassword" name="password" placeholder="请输入密码" autocomplete="current-password" required>
+                    <div style="position: relative;">
+                        <input type="password" class="form-input" id="loginPassword" name="password" placeholder="请输入密码" autocomplete="current-password" required style="padding-right: 45px;">
+                        <button type="button" onclick="togglePassword('loginPassword', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text-muted); transition: var(--transition);">👁️</button>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">登录</button>
             </form>
@@ -2003,7 +2006,10 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="newPassword">密码</label>
-                        <input type="password" class="form-input" id="newPassword" name="newPassword" placeholder="请输入密码" autocomplete="new-password">
+                        <div style="position: relative;">
+                            <input type="password" class="form-input" id="newPassword" name="newPassword" placeholder="请输入密码" autocomplete="new-password" style="padding-right: 45px;">
+                            <button type="button" onclick="togglePassword('newPassword', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text-muted); transition: var(--transition);">👁️</button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">
@@ -2043,7 +2049,10 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="editPassword">新密码（留空则不修改）</label>
-                        <input type="password" class="form-input" id="editPassword" name="editPassword" placeholder="请输入新密码" autocomplete="new-password">
+                        <div style="position: relative;">
+                            <input type="password" class="form-input" id="editPassword" name="editPassword" placeholder="请输入新密码" autocomplete="new-password" style="padding-right: 45px;">
+                            <button type="button" onclick="togglePassword('editPassword', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text-muted); transition: var(--transition);">👁️</button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">
@@ -2065,6 +2074,18 @@
     </div>
 
     <script>
+        // Toggle password visibility
+        function togglePassword(inputId, button) {
+            const passwordInput = document.getElementById(inputId);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                button.textContent = '🔒';
+            } else {
+                passwordInput.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+
         // API配置
         const API_BASE_URL = '/backend/api';
         let token = localStorage.getItem('admin_token');

@@ -236,8 +236,22 @@ function loginUser($data, $userModel, $jwt, $response) {
             return;
         }
 
-        // 验证密码
-        if (!password_verify($data['password'], $user['password_hash'])) {
+        // 验证密码（支持明文和加密密码）
+        $passwordValid = false;
+        
+        // 先尝试用password_verify验证
+        if (password_verify($data['password'], $user['password_hash'])) {
+            $passwordValid = true;
+        } 
+        // 如果失败，再检查是否是明文密码（为了兼容旧数据）
+        elseif ($data['password'] === $user['password_hash']) {
+            $passwordValid = true;
+            // 自动将明文密码转换为加密密码
+            $newPasswordHash = password_hash($data['password'], PASSWORD_DEFAULT);
+            $userModel->updateUser($user['id'], ['password_hash' => $newPasswordHash]);
+        }
+        
+        if (!$passwordValid) {
             $response->error('邮箱或密码错误', 401);
             return;
         }
@@ -368,8 +382,16 @@ function changePassword($data, $jwt, $userModel, $response) {
             return;
         }
 
-        // 验证旧密码
-        if (!password_verify($data['old_password'], $user['password_hash'])) {
+        // 验证旧密码（支持明文和加密密码）
+        $oldPasswordValid = false;
+        
+        if (password_verify($data['old_password'], $user['password_hash'])) {
+            $oldPasswordValid = true;
+        } elseif ($data['old_password'] === $user['password_hash']) {
+            $oldPasswordValid = true;
+        }
+        
+        if (!$oldPasswordValid) {
             $response->error('旧密码错误', 401);
             return;
         }

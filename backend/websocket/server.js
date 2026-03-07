@@ -193,36 +193,57 @@ async function handleConnection(ws, req) {
 async function startPolling() {
     console.log('[POLL] Starting database polling for new codes...');
     
-    let lastCheckTime = new Date();
+    let lastCodeTimestamp = Date.now() - 60000;
+    
+    const broadcastedCodes = new Set();
     
     setInterval(async () => {
         try {
             const [newCodes] = await pool.execute(
-                'SELECT m.user_id, m.phone, m.last_code, m.last_extracted_code, m.updated_at FROM monitors m WHERE m.updated_at > ? AND m.last_code IS NOT NULL AND m.last_code != ""',
-                [lastCheckTime]
+                'SELECT m.user_id, m.phone, m.last_code, m.last_extracted_code, m.code_timestamp FROM monitors m WHERE m.code_timestamp > ? AND m.last_code IS NOT NULL AND m.last_code != ""',
+                [lastCodeTimestamp]
             );
             
             if (newCodes.length > 0) {
                 console.log(`[POLL] Found ${newCodes.length} new codes`);
                 
-                const userCodes = new Map();
-                newCodes.forEach(code => {
-                    if (!userCodes.has(code.user_id)) {
-                        userCodes.set(code.user_id, []);
-                    }
-                    userCodes.get(code.user_id).push(code);
-                });
+                const userCodesMap = new Map();
                 
-                for (const [userId, codes] of userCodes) {
+                for (const code of newCodes) {
+                    const codeKey = `${code.user_id}:${code.phone}:${code.last_extracted_code || code.last_code}:${code.code_timestamp}`;
+                    if (broadcastedCodes.has(codeKey)) {
+                        continue;
+                    }
+                    
+                    broadcastedCodes.add(codeKey);
+                    
+                    if (!userCodesMap.has(code.user_id)) {
+                        userCodesMap.set(code.user_id, []);
+                    }
+                    userCodesMap.get(code.user_id).push(code);
+                    
+                    if (code.code_timestamp > lastCodeTimestamp) {
+                        lastCodeTimestamp = code.code_timestamp;
+                    }
+                }
+                
+                for (const [userId, codes] of userCodesMap) {
                     for (const codeInfo of codes) {
                         await broadcastNewCode(userId, codeInfo.phone, codeInfo.last_extracted_code || codeInfo.last_code);
                     }
                     const userMonitors = await getUserMonitors(userId);
                     await broadcastMonitorUpdate(userId, userMonitors);
                 }
+                
+                if (broadcastedCodes.size > 1000) {
+                    const codesArray = Array.from(broadcastedCodes);
+                    const newSet = new Set(codesArray.slice(-500));
+                    broadcastedCodes.clear();
+                    for (const code of newSet) {
+                        broadcastedCodes.add(code);
+                    }
+                }
             }
-            
-            lastCheckTime = new Date();
         } catch (error) {
             console.error('[POLL] Error during polling:', error);
         }

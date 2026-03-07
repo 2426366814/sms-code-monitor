@@ -337,6 +337,7 @@
                         <label class="form-label" for="password">密码</label>
                         <div class="form-input-wrapper">
                             <input type="password" class="form-input" id="password" name="password" placeholder="请输入密码" autocomplete="new-password" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('password', this)">👁️</button>
                         </div>
                     </div>
 
@@ -344,6 +345,7 @@
                         <label class="form-label" for="confirmPassword">确认密码</label>
                         <div class="form-input-wrapper">
                             <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" placeholder="再次输入密码" autocomplete="new-password" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword', this)">👁️</button>
                         </div>
                     </div>
                 </div>
@@ -358,6 +360,17 @@
     </div>
 
     <script>
+        function togglePassword(inputId, button) {
+            const passwordInput = document.getElementById(inputId);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                button.textContent = '🔒';
+            } else {
+                passwordInput.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             

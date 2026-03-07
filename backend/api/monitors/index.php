@@ -180,7 +180,9 @@ switch ($method) {
  */
 function getMonitors($payload, $monitorModel) {
     try {
-        $monitors = $monitorModel->getMonitorsByUserId($payload['user_id']);
+        $sql = "SELECT * FROM monitors WHERE user_id = ? ORDER BY id DESC";
+        $db = Database::getInstance();
+        $monitors = $db->fetchAll($sql, [$payload['user_id']]);
         Response::success(['list' => $monitors], '获取成功');
     } catch (Exception $e) {
         Response::error('获取监控列表失败: ' . $e->getMessage(), 500);
@@ -359,18 +361,19 @@ function updateMonitor($data, $payload, $monitorModel) {
  */
 function deleteMonitor($data, $payload, $monitorModel) {
     try {
-        if (!isset($data['id'])) {
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
             Response::error('缺少监控ID', 400);
             return;
         }
 
-        $monitor = $monitorModel->getMonitorById($data['id']);
+        $monitor = $monitorModel->getMonitorById($id);
         if (!$monitor || $monitor['user_id'] != $payload['user_id']) {
             Response::error('监控项不存在', 404);
             return;
         }
 
-        $result = $monitorModel->deleteMonitor($data['id']);
+        $result = $monitorModel->deleteMonitor($id);
         if ($result) {
             Response::success(null, '删除成功');
         } else {
