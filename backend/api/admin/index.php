@@ -292,7 +292,7 @@ function getApiKeyCount($database) {
 function getTodayCodeCount($database) {
     try {
         $today = date('Y-m-d');
-        $query = "SELECT COUNT(*) as count FROM verification_codes WHERE DATE(created_at) = ?";
+        $query = "SELECT COUNT(*) as count FROM codes WHERE DATE(created_at) = ?";
         $result = $database->fetchOne($query, [$today]);
         $count = $result ? (int)$result['count'] : 0;
         Response::success(['count' => $count], '获取成功');
@@ -488,6 +488,15 @@ function updateUser($database, $currentUser) {
         
         // 更新用户名
         if (isset($data['username']) && !empty($data['username'])) {
+            // 禁止修改为保留用户名（除非当前用户已经是保留用户名）
+            $reservedUsernames = ['admin', 'administrator', 'root', 'system', 'sys', 'test', 'guest', 'user', 'demo', 'api', 'null', 'undefined'];
+            $currentUserData = $database->fetchOne("SELECT username FROM users WHERE id = ?", [$userId]);
+            if (in_array(strtolower($data['username']), $reservedUsernames) && 
+                strtolower($currentUserData['username']) !== strtolower($data['username'])) {
+                Response::error('该用户名为系统保留用户名，不可使用', 400);
+                return;
+            }
+            
             // 检查用户名是否已存在（排除当前用户）
             $existingUser = $database->fetchOne(
                 "SELECT id FROM users WHERE username = ? AND id != ?",
@@ -663,20 +672,21 @@ function getAllCodes($database) {
         $params = [];
         
         if (!empty($phone)) {
-            $whereClause .= " AND vc.phone LIKE ?";
+            $whereClause .= " AND m.phone LIKE ?";
             $params[] = "%$phone%";
         }
         
-        $query = "SELECT vc.*, u.username FROM verification_codes vc 
-                  LEFT JOIN users u ON vc.user_id = u.id 
+        $query = "SELECT c.*, m.phone, u.username FROM codes c 
+                  LEFT JOIN monitors m ON c.monitor_id = m.id 
+                  LEFT JOIN users u ON m.user_id = u.id 
                   $whereClause 
-                  ORDER BY vc.created_at DESC LIMIT ? OFFSET ?";
+                  ORDER BY c.created_at DESC LIMIT ? OFFSET ?";
         $params[] = $limit;
         $params[] = $offset;
         
         $codes = $database->fetchAll($query, $params);
         
-        $countQuery = "SELECT COUNT(*) as count FROM verification_codes vc $whereClause";
+        $countQuery = "SELECT COUNT(*) as count FROM codes c LEFT JOIN monitors m ON c.monitor_id = m.id $whereClause";
         $countParams = [];
         if (!empty($phone)) {
             $countParams[] = "%$phone%";
@@ -738,44 +748,41 @@ function getStatistics($database) {
         $weekStart = date('Y-m-d', strtotime('monday this week'));
         $monthStart = date('Y-m-01');
         
-        // 今日验证码
         $todayCodes = $database->fetchOne(
-            "SELECT COUNT(*) as count FROM verification_codes WHERE DATE(created_at) = ?",
+            "SELECT COUNT(*) as count FROM codes WHERE DATE(created_at) = ?",
             [$today]
         );
         
-        // 本周验证码
         $weekCodes = $database->fetchOne(
-            "SELECT COUNT(*) as count FROM verification_codes WHERE DATE(created_at) >= ?",
+            "SELECT COUNT(*) as count FROM codes WHERE DATE(created_at) >= ?",
             [$weekStart]
         );
         
-        // 本月验证码
         $monthCodes = $database->fetchOne(
-            "SELECT COUNT(*) as count FROM verification_codes WHERE DATE(created_at) >= ?",
+            "SELECT COUNT(*) as count FROM codes WHERE DATE(created_at) >= ?",
             [$monthStart]
         );
         
-        // 活跃用户（7天内有活动）
         $activeUsers = $database->fetchOne(
-            "SELECT COUNT(DISTINCT user_id) as count FROM verification_codes WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)"
+            "SELECT COUNT(DISTINCT m.user_id) as count FROM codes c 
+             INNER JOIN monitors m ON c.monitor_id = m.id 
+             WHERE c.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)"
         );
         
-        // 每日趋势（最近7天）
         $dailyTrend = $database->fetchAll(
             "SELECT DATE(created_at) as date, COUNT(*) as count 
-             FROM verification_codes 
+             FROM codes 
              WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) 
              GROUP BY DATE(created_at) 
              ORDER BY date ASC"
         );
         
-        // 平台分布
         $platformDistribution = $database->fetchAll(
-            "SELECT source_url as platform, COUNT(*) as count 
-             FROM verification_codes 
-             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-             GROUP BY source_url 
+            "SELECT m.url as platform, COUNT(*) as count 
+             FROM codes c 
+             INNER JOIN monitors m ON c.monitor_id = m.id 
+             WHERE c.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+             GROUP BY m.url 
              ORDER BY count DESC 
              LIMIT 10"
         );
@@ -947,7 +954,7 @@ function deleteMonitor($database) {
             return;
         }
         
-        $database->query("DELETE FROM verification_codes WHERE monitor_id = ?", [$monitorId]);
+        $database->query("DELETE FROM codes WHERE monitor_id = ?", [$monitorId]);
         $stmt = $database->query("DELETE FROM monitors WHERE id = ?", [$monitorId]);
         $result = $stmt->rowCount() > 0;
         
@@ -966,7 +973,7 @@ function deleteMonitor($database) {
  */
 function clearAllMonitors($database) {
     try {
-        $database->query("DELETE FROM verification_codes");
+        $database->query("DELETE FROM codes");
         $database->query("DELETE FROM monitors");
         Response::success(null, '所有监控项已清空');
     } catch (Exception $e) {
@@ -1028,7 +1035,7 @@ function clearOldCodes($database) {
             $days = 30;
         }
         
-        $stmt = $database->query("DELETE FROM verification_codes WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)", [$days]);
+        $stmt = $database->query("DELETE FROM codes WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)", [$days]);
         $deleted = $stmt->rowCount();
         
         Response::success(['deleted' => $deleted], "已清理 {$deleted} 条旧验证码");
@@ -1061,7 +1068,7 @@ function exportAllData($database) {
     try {
         $users = $database->fetchAll("SELECT id, username, email, status, is_admin, created_at FROM users");
         $monitors = $database->fetchAll("SELECT * FROM monitors");
-        $codes = $database->fetchAll("SELECT * FROM verification_codes ORDER BY created_at DESC LIMIT 1000");
+        $codes = $database->fetchAll("SELECT * FROM codes ORDER BY created_at DESC LIMIT 1000");
         $apiKeys = $database->fetchAll("SELECT id, user_id, name, status, created_at FROM api_keys");
         $platforms = $database->fetchAll("SELECT * FROM sms_platforms");
         

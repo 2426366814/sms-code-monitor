@@ -123,6 +123,13 @@ function registerUser($data, $userModel, $jwt, $response) {
         $response->error('用户名只能包含字母、数字和下划线，长度3-20位', 400);
         return;
     }
+    
+    // 禁止注册保留用户名
+    $reservedUsernames = ['admin', 'administrator', 'root', 'system', 'sys', 'test', 'guest', 'user', 'demo', 'api', 'null', 'undefined'];
+    if (in_array(strtolower($data['username']), $reservedUsernames)) {
+        $response->error('该用户名为系统保留用户名，不可注册', 400);
+        return;
+    }
 
     if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
         $response->error('邮箱格式不正确', 400);

@@ -1,12 +1,15 @@
 /**
  * WebSocket Server for Verification Code Monitoring System
  * Real-time push notifications for new verification codes
+ * 
+ * v2.0 - Integrated Monitor Service (Node.js based)
  */
 
 require('dotenv').config({ path: __dirname + '/../config/.env' });
 const WebSocket = require('ws');
 const mysql = require('mysql2/promise');
 const jwt = require('jsonwebtoken');
+const MonitorService = require('./monitor-service');
 
 const PORT = process.env.WS_PORT || 8080;
 const DB_CONFIG = {
@@ -253,6 +256,20 @@ async function startPolling() {
 async function main() {
     await initDatabase();
     
+    // Initialize Monitor Service
+    const monitorService = new MonitorService();
+    await monitorService.init();
+    
+    // Set callback for new codes
+    monitorService.onCodeReceived = async (userId, phone, code) => {
+        console.log(`[MonitorService] New code for user ${userId}: ${phone} -> ${code}`);
+        await broadcastNewCode(userId, phone, code);
+        
+        // Also broadcast monitor update
+        const userMonitors = await getUserMonitors(userId);
+        await broadcastMonitorUpdate(userId, userMonitors);
+    };
+    
     const wss = new WebSocket.Server({ port: PORT });
     
     console.log(`[WS] WebSocket server started on port ${PORT}`);
@@ -261,10 +278,16 @@ async function main() {
     
     wss.on('connection', handleConnection);
     
-    startPolling();
+    // Start Monitor Service (replaces PHP cron)
+    monitorService.start();
+    console.log('[MonitorService] Started - replacing PHP cron');
+    
+    // Keep polling for backward compatibility (can be removed later)
+    // startPolling();
     
     process.on('SIGINT', async () => {
         console.log('\n[WS] Shutting down...');
+        monitorService.stop();
         wss.clients.forEach(client => client.close());
         await pool.end();
         process.exit(0);

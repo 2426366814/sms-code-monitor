@@ -8,7 +8,7 @@ require_once __DIR__ . '/BaseModel.php';
 require_once __DIR__ . '/../utils/Database.php';
 
 class CodeModel extends BaseModel {
-    protected $table = 'verification_codes';
+    protected $table = 'codes';
     
     /**
      * 根据用户ID获取验证码列表
@@ -21,20 +21,18 @@ class CodeModel extends BaseModel {
         $limit = isset($params['limit']) ? (int)$params['limit'] : 10;
         $offset = ($page - 1) * $limit;
         
-        $sql = "SELECT * FROM {$this->table} WHERE user_id = ?";
+        $sql = "SELECT c.*, m.phone, m.url 
+                FROM {$this->table} c 
+                INNER JOIN monitors m ON c.monitor_id = m.id 
+                WHERE m.user_id = ?";
         $sqlParams = [$userId];
         
-        if (!empty($params['status'])) {
-            $sql .= " AND status = ?";
-            $sqlParams[] = $params['status'];
-        }
-        
         if (!empty($params['monitor_id'])) {
-            $sql .= " AND monitor_id = ?";
+            $sql .= " AND c.monitor_id = ?";
             $sqlParams[] = $params['monitor_id'];
         }
         
-        $sql .= " ORDER BY id DESC LIMIT ? OFFSET ?";
+        $sql .= " ORDER BY c.id DESC LIMIT ? OFFSET ?";
         $sqlParams[] = $limit;
         $sqlParams[] = $offset;
         
@@ -48,16 +46,14 @@ class CodeModel extends BaseModel {
      * @return int
      */
     public function getCodesCountByUserId($userId, $params = []) {
-        $sql = "SELECT COUNT(*) as count FROM {$this->table} WHERE user_id = ?";
+        $sql = "SELECT COUNT(*) as count 
+                FROM {$this->table} c 
+                INNER JOIN monitors m ON c.monitor_id = m.id 
+                WHERE m.user_id = ?";
         $sqlParams = [$userId];
         
-        if (!empty($params['status'])) {
-            $sql .= " AND status = ?";
-            $sqlParams[] = $params['status'];
-        }
-        
         if (!empty($params['monitor_id'])) {
-            $sql .= " AND monitor_id = ?";
+            $sql .= " AND c.monitor_id = ?";
             $sqlParams[] = $params['monitor_id'];
         }
         
@@ -72,15 +68,15 @@ class CodeModel extends BaseModel {
      * @return array|null
      */
     public function getCodeById($id, $userId = null) {
-        $sql = "SELECT * FROM {$this->table} WHERE id = ?";
-        $params = [$id];
-        
         if ($userId !== null) {
-            $sql .= " AND user_id = ?";
-            $params[] = $userId;
+            $sql = "SELECT c.* FROM {$this->table} c 
+                    INNER JOIN monitors m ON c.monitor_id = m.id 
+                    WHERE c.id = ? AND m.user_id = ?";
+            return $this->db->fetchOne($sql, [$id, $userId]);
         }
         
-        return $this->db->fetchOne($sql, $params);
+        $sql = "SELECT * FROM {$this->table} WHERE id = ?";
+        return $this->db->fetchOne($sql, [$id]);
     }
     
     /**
@@ -100,13 +96,27 @@ class CodeModel extends BaseModel {
      * @return int
      */
     public function updateCode($id, $data, $userId = null) {
-        $where = ['id' => $id];
-        
         if ($userId !== null) {
-            $where['user_id'] = $userId;
+            $sql = "UPDATE {$this->table} c 
+                    INNER JOIN monitors m ON c.monitor_id = m.id 
+                    SET ";
+            $setParts = [];
+            foreach ($data as $key => $value) {
+                $setParts[] = "c.{$key} = ?";
+            }
+            $sql .= implode(', ', $setParts);
+            $sql .= " WHERE c.id = ? AND m.user_id = ?";
+            
+            $params = array_values($data);
+            $params[] = $id;
+            $params[] = $userId;
+            
+            $stmt = $this->db->getPdo()->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->rowCount();
         }
         
-        return $this->update($data, $where);
+        return $this->update($data, ['id' => $id]);
     }
     
     /**
@@ -116,13 +126,16 @@ class CodeModel extends BaseModel {
      * @return int
      */
     public function deleteCode($id, $userId = null) {
-        $where = ['id' => $id];
-        
         if ($userId !== null) {
-            $where['user_id'] = $userId;
+            $sql = "DELETE c FROM {$this->table} c 
+                    INNER JOIN monitors m ON c.monitor_id = m.id 
+                    WHERE c.id = ? AND m.user_id = ?";
+            $stmt = $this->db->getPdo()->prepare($sql);
+            $stmt->execute([$id, $userId]);
+            return $stmt->rowCount();
         }
         
-        return $this->delete($where);
+        return $this->delete(['id' => $id]);
     }
     
     /**

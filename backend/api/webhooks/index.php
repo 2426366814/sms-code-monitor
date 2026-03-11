@@ -53,28 +53,35 @@ class WebhookManager {
     }
     
     private function ensureTableExists() {
-        $this->db->query("
-            CREATE TABLE IF NOT EXISTS webhooks (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
-                name VARCHAR(100) NOT NULL,
-                url VARCHAR(500) NOT NULL,
-                secret VARCHAR(255) NULL,
-                is_active TINYINT(1) DEFAULT 1,
-                events TEXT NULL COMMENT '触发事件类型',
-                last_triggered_at DATETIME NULL,
-                last_status VARCHAR(20) NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_user_id (user_id),
-                INDEX idx_is_active (is_active)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-        ");
+        try {
+            $this->pdo->exec("
+                CREATE TABLE IF NOT EXISTS webhooks (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    user_id INT NOT NULL,
+                    name VARCHAR(100) NOT NULL,
+                    url VARCHAR(500) NOT NULL,
+                    secret VARCHAR(255) NULL,
+                    is_active TINYINT(1) DEFAULT 1,
+                    events TEXT NULL COMMENT '触发事件类型',
+                    last_triggered_at DATETIME NULL,
+                    last_status VARCHAR(20) NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    INDEX idx_user_id (user_id),
+                    INDEX idx_is_active (is_active)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ");
+        } catch (PDOException $e) {
+            error_log('Webhook table creation error: ' . $e->getMessage());
+        }
     }
     
     public function handle() {
         $method = $_SERVER['REQUEST_METHOD'];
-        $path = $_GET['path'] ?? '';
+        
+        $pathInfo = $_SERVER['PATH_INFO'] ?? '';
+        $queryPath = $_GET['path'] ?? '';
+        $path = $pathInfo ?: $queryPath;
         $parts = array_filter(explode('/', $path));
         
         $webhookId = intval($parts[0] ?? 0);
@@ -139,9 +146,13 @@ class WebhookManager {
     private function createWebhook() {
         $input = json_decode(file_get_contents('php://input'), true);
         
+        if (!$input) {
+            $input = $_POST;
+        }
+        
         $name = trim($input['name'] ?? '');
         $url = trim($input['url'] ?? '');
-        $secret = $input['secret'] ?? null;
+        $secret = isset($input['secret']) ? trim($input['secret']) : null;
         $events = $input['events'] ?? ['code_received'];
         $isActive = intval($input['is_active'] ?? 1);
         
@@ -149,31 +160,40 @@ class WebhookManager {
             Response::error('Webhook name is required', 400);
         }
         
-        if (empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
+        if (empty($url)) {
+            Response::error('URL is required', 400);
+        }
+        
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
             Response::error('Valid URL is required', 400);
         }
         
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO webhooks (user_id, name, url, secret, events, is_active, created_at)
-             VALUES (:user_id, :name, :url, :secret, :events, :is_active, NOW())"
-        );
-        
-        $stmt->execute([
-            ':user_id' => $this->userId,
-            ':name' => $name,
-            ':url' => $url,
-            ':secret' => $secret,
-            ':events' => json_encode($events),
-            ':is_active' => $isActive
-        ]);
-        
-        $id = $this->pdo->lastInsertId();
-        
-        Response::success([
-            'id' => intval($id),
-            'name' => $name,
-            'url' => $url
-        ], 'Webhook created successfully');
+        try {
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO webhooks (user_id, name, url, secret, events, is_active)
+                 VALUES (:user_id, :name, :url, :secret, :events, :is_active)"
+            );
+            
+            $stmt->execute([
+                ':user_id' => $this->userId,
+                ':name' => $name,
+                ':url' => $url,
+                ':secret' => $secret ?: null,
+                ':events' => json_encode($events),
+                ':is_active' => $isActive
+            ]);
+            
+            $id = $this->pdo->lastInsertId();
+            
+            Response::success([
+                'id' => intval($id),
+                'name' => $name,
+                'url' => $url
+            ], 'Webhook created successfully');
+        } catch (PDOException $e) {
+            error_log('Webhook creation error: ' . $e->getMessage());
+            Response::error('Failed to create webhook: ' . $e->getMessage(), 500);
+        }
     }
     
     private function updateWebhook($id) {
@@ -264,7 +284,6 @@ class WebhookManager {
     }
     
     private function getWebhookLogs($id) {
-        // 验证webhook所有权
         $stmt = $this->pdo->prepare(
             "SELECT id FROM webhooks WHERE id = :id AND user_id = :user_id"
         );
@@ -273,8 +292,7 @@ class WebhookManager {
             Response::error('Webhook not found', 404);
         }
         
-        // 检查日志表是否存在
-        $tableExists = $this->db->fetchOne("SHOW TABLES LIKE 'webhook_logs'");
+        $tableExists = $this->db->tableExists('webhook_logs');
         
         if (!$tableExists) {
             Response::success(['list' => []], 'Success');
@@ -319,7 +337,6 @@ class WebhookManager {
         $error = curl_error($ch);
         curl_close($ch);
         
-        // 更新webhook状态
         $this->pdo->prepare(
             "UPDATE webhooks SET last_triggered_at = NOW(), last_status = ? WHERE id = ?"
         )->execute([$error ? 'failed' : 'success', $webhook['id']]);
@@ -336,5 +353,6 @@ try {
     $manager = new WebhookManager();
     $manager->handle();
 } catch (Exception $e) {
+    error_log('Webhook API error: ' . $e->getMessage());
     Response::error('Internal server error: ' . $e->getMessage(), 500);
 }

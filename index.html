@@ -219,7 +219,8 @@
         /* Layout */
         .app-container {
             display: flex;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             position: relative;
             z-index: 1;
         }
@@ -514,6 +515,8 @@
             margin-left: var(--sidebar-width);
             display: flex;
             flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
         }
 
         /* Header - Glassmorphism */
@@ -4247,6 +4250,16 @@ Content-Type: application/json
             if (pageElement) {
                 pageElement.classList.add('active');
             }
+            
+            // 强制滚动到顶部（多种方式确保生效）
+            const contentArea = document.querySelector('.content');
+            if (contentArea) {
+                contentArea.scrollTop = 0;
+                contentArea.scrollTo(0, 0);
+            }
+            window.scrollTo(0, 0);
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
             
             const titles = {
                 'dashboard': '监控面板',

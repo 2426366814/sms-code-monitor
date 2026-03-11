@@ -74,53 +74,57 @@ class UserStatistics {
         $weekStart = date('Y-m-d', strtotime('monday this week'));
         $monthStart = date('Y-m-01');
         
-        // 今日验证码
         $todayCodes = $this->db->fetchOne(
-            "SELECT COUNT(*) as count FROM verification_codes WHERE user_id = :user_id AND DATE(created_at) = :today",
+            "SELECT COUNT(*) as count FROM codes c 
+             INNER JOIN monitors m ON c.monitor_id = m.id 
+             WHERE m.user_id = :user_id AND DATE(c.created_at) = :today",
             [':user_id' => $this->userId, ':today' => $today]
         );
         
-        // 本周验证码
         $weekCodes = $this->db->fetchOne(
-            "SELECT COUNT(*) as count FROM verification_codes WHERE user_id = :user_id AND DATE(created_at) >= :week_start",
+            "SELECT COUNT(*) as count FROM codes c 
+             INNER JOIN monitors m ON c.monitor_id = m.id 
+             WHERE m.user_id = :user_id AND DATE(c.created_at) >= :week_start",
             [':user_id' => $this->userId, ':week_start' => $weekStart]
         );
         
-        // 本月验证码
         $monthCodes = $this->db->fetchOne(
-            "SELECT COUNT(*) as count FROM verification_codes WHERE user_id = :user_id AND DATE(created_at) >= :month_start",
+            "SELECT COUNT(*) as count FROM codes c 
+             INNER JOIN monitors m ON c.monitor_id = m.id 
+             WHERE m.user_id = :user_id AND DATE(c.created_at) >= :month_start",
             [':user_id' => $this->userId, ':month_start' => $monthStart]
         );
         
-        // 总验证码
         $totalCodes = $this->db->fetchOne(
-            "SELECT COUNT(*) as count FROM verification_codes WHERE user_id = :user_id",
+            "SELECT COUNT(*) as count FROM codes c 
+             INNER JOIN monitors m ON c.monitor_id = m.id 
+             WHERE m.user_id = :user_id",
             [':user_id' => $this->userId]
         );
         
-        // 监控手机号数量
         $totalPhones = $this->db->fetchOne(
             "SELECT COUNT(*) as count FROM monitors WHERE user_id = :user_id",
             [':user_id' => $this->userId]
         );
         
-        // 活跃监控（有验证码的）
         $activeMonitors = $this->db->fetchOne(
             "SELECT COUNT(*) as count FROM monitors WHERE user_id = :user_id AND status = 'success'",
             [':user_id' => $this->userId]
         );
         
-        // API密钥数量
         $totalApiKeys = $this->db->fetchOne(
             "SELECT COUNT(*) as count FROM api_keys WHERE user_id = :user_id",
             [':user_id' => $this->userId]
         );
         
-        // 外部平台数量
-        $totalPlatforms = $this->db->fetchOne(
-            "SELECT COUNT(*) as count FROM sms_platforms WHERE user_id = :user_id",
-            [':user_id' => $this->userId]
-        );
+        $tableExists = $this->db->fetchOne("SHOW TABLES LIKE 'sms_platforms'");
+        $totalPlatforms = ['count' => 0];
+        if ($tableExists) {
+            $totalPlatforms = $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM sms_platforms WHERE user_id = :user_id",
+                [':user_id' => $this->userId]
+            );
+        }
         
         Response::success([
             'today_codes' => (int)($todayCodes['count'] ?? 0),
@@ -139,15 +143,15 @@ class UserStatistics {
         $days = min(30, max(1, $days));
         
         $trend = $this->db->fetchAll(
-            "SELECT DATE(created_at) as date, COUNT(*) as count 
-             FROM verification_codes 
-             WHERE user_id = :user_id AND created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
-             GROUP BY DATE(created_at) 
+            "SELECT DATE(c.created_at) as date, COUNT(*) as count 
+             FROM codes c 
+             INNER JOIN monitors m ON c.monitor_id = m.id 
+             WHERE m.user_id = :user_id AND c.created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
+             GROUP BY DATE(c.created_at) 
              ORDER BY date ASC",
             [':user_id' => $this->userId, ':days' => $days]
         );
         
-        // 填充缺失的日期
         $result = [];
         $dateMap = [];
         
@@ -168,10 +172,11 @@ class UserStatistics {
     
     private function getPlatformStats() {
         $platformStats = $this->db->fetchAll(
-            "SELECT source_url as platform, COUNT(*) as count 
-             FROM verification_codes 
-             WHERE user_id = :user_id AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-             GROUP BY source_url 
+            "SELECT m.url as platform, COUNT(*) as count 
+             FROM codes c 
+             INNER JOIN monitors m ON c.monitor_id = m.id 
+             WHERE m.user_id = :user_id AND c.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+             GROUP BY m.url 
              ORDER BY count DESC 
              LIMIT 10",
             [':user_id' => $this->userId]

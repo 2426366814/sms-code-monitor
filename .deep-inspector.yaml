@@ -1,96 +1,103 @@
-# Deep Inspector 配置文件 v8.23
-# 多用户动态验证码监控系统
+# Deep Inspector 配置文件 v8.38
+# 由 Deep Inspector 自动生成
+# 基于项目开发文档.md 提取
+
+version: "8.38"
 
 project:
-  name: 多用户动态验证码监控系统
-  version: 1.6.0
-  type: web_application
-  framework: php_native
-  language: php
-  multi_user_system: true
+  name: "多用户动态验证码监控系统"
+  type: "web-app"
+  description: "实时监控多个手机号验证码的网页应用"
 
-remote:
-  enabled: true
-  host: 134.185.111.25
-  port: 1022
-  user: root
-  auth_method: ssh_key
-  key_file: C:\Users\Administrator\.ssh\id_rsa
-  site_path: /home/wwwroot/jm.91wz.org
-  domain: https://jm.91wz.org
+environments:
+  local:
+    url: "http://localhost"
+  production:
+    url: "https://jm.91wz.org"
+    ssh: "root@134.185.111.25:1022"
+    domain: "jm.91wz.org"
+    webRoot: "/home/wwwroot/jm.91wz.org"
 
 database:
+  type: mysql
   host: localhost
   name: jm
   user: jm
-  password: ck123456@
+  charset: utf8mb4
 
-test_accounts:
-  admin:
-    username: "2426366814"
-    password: "ck123456@"
-    role: admin
-  user:
-    username: "cccp"
-    password: "ck123456@"
-    role: user
+api:
+  prefix: /backend/api
+  baseUrl: "https://jm.91wz.org/backend/api"
+
+users:
+  roles: [admin, user]
+  defaultAdmin:
+    username: cccp
+    password: ck123456@
+  testUser:
+    username: 2426366814
+    password: ck123456@
+
+phases:
+  enabled: [0, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10]
+
+detectors:
+  core: true
+  security: true
+  performance: true
+  accessibility: true
+  visualRegression: true
+  multiUser: true
 
 pages:
-  login: /login.html
-  register: /register.html
-  user_dashboard: /index.html
-  admin_dashboard: /admin.html
-  health: /health.html
+  user:
+    - name: "监控管理"
+      path: "#monitors"
+    - name: "历史验证码"
+      path: "#history"
+    - name: "API密钥"
+      path: "#apikeys"
+    - name: "统计分析"
+      path: "#statistics"
+    - name: "外部平台"
+      path: "#platforms"
+    - name: "Webhook"
+      path: "#webhooks"
+    - name: "个人设置"
+      path: "#settings"
+    - name: "帮助中心"
+      path: "#help"
+  admin:
+    - name: "仪表盘"
+      path: "#dashboard"
+    - name: "用户管理"
+      path: "#users"
+    - name: "监控管理"
+      path: "#monitors"
+    - name: "验证码记录"
+      path: "#codes"
+    - name: "API密钥"
+      path: "#apikeys"
+    - name: "统计分析"
+      path: "#statistics"
+    - name: "系统日志"
+      path: "#logs"
+    - name: "平台配置"
+      path: "#platforms"
+    - name: "系统设置"
+      path: "#settings"
 
-api_endpoints:
-  base: /backend/api/
-  auth: /backend/api/auth/index.php
-  monitors: /backend/api/monitors/index.php
-  admin: /backend/api/admin/index.php
-  codes: /backend/api/codes/index.php
-  apikeys: /backend/api/apikeys/index.php
-  bulk: /backend/api/bulk/index.php
-  statistics: /backend/api/statistics/index.php
-  webhooks: /backend/api/webhooks/index.php
-  external_v1: /backend/api/external/v1/index.php
+reporting:
+  formats: [html, json, markdown]
+  output: ./.trae/test-screenshots
+  includeScreenshots: true
 
-websocket:
+cache:
   enabled: true
-  port: 8080
-  url: ws://jm.91wz.org:8080
+  ttl: 3600
+  backend: file
 
-detection:
-  phases:
-    - phase_minus_1_config_load
-    - phase_0_project_info
-    - phase_1_code_review
-    - phase_2_functionality
-    - phase_3_interaction
-    - phase_4_concurrency
-    - phase_4_5_multi_user
-    - phase_5_boundary
-    - phase_6_remote_server
-    - phase_7_cycle_verification
-    - phase_8_git_update
-  
-  features:
-    headed_mode: true
-    screenshot_per_step: true
-    content_verification: true
-    crud_complete: true
-    parallel_detection: true
-  
-  auto_approve: true
-  max_iterations: 7
-
-history:
-  last_run: "2026-03-04T08:45:00+08:00"
-  issues_found: []
-  issues_fixed: []
-  test_results:
-    total: 200
-    passed: 200
-    failed: 0
-    pass_rate: "100%"
-    rounds_completed: 5
-    last_full_test: "2026-03-04T08:45:00+08:00"
+execution:
+  parallel: true
+  maxWorkers: 4
+  timeout: 60000
