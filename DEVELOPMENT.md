@@ -186,12 +186,12 @@ ws://localhost:8080?token=JWT_TOKEN
 ```env
 # 数据库配置
 DB_HOST=localhost
-DB_USER=jm
-DB_PASS=ck123456@
+DB_USER=your_db_user
+DB_PASS=your_db_password
 DB_NAME=jm
 
 # JWT 配置
-JWT_SECRET=your-secret-key
+JWT_SECRET=your-jwt-secret-key
 
 # WebSocket 配置
 WS_PORT=8080
