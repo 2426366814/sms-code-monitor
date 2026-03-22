@@ -5,20 +5,16 @@
  */
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
+require_once '../../utils/CORS.php';
+CORS::setHeaders();
 
-// 加载配置文件
 require_once '../../config/config.php';
 require_once '../../utils/Database.php';
 require_once '../../utils/JWT.php';
 require_once '../../utils/Response.php';
 require_once '../../models/UserModel.php';
+require_once '../../utils/RateLimiter.php';
 
 // 初始化响应对象
 $response = new Response();
@@ -207,66 +203,66 @@ function registerUser($data, $userModel, $jwt, $response) {
  * @param Response $response 响应对象
  */
 function loginUser($data, $userModel, $jwt, $response) {
-    // 验证请求数据
+    require_once '../../utils/RateLimiter.php';
+    
     if ((!isset($data['email']) && !isset($data['username'])) || !isset($data['password'])) {
         $response->error('缺少必要的登录信息', 400);
         return;
     }
 
-    // 获取登录标识（邮箱或用户名）
     $loginId = isset($data['email']) ? $data['email'] : (isset($data['username']) ? $data['username'] : '');
     
-    // 验证数据格式
     if (empty($loginId) || empty($data['password'])) {
         $response->error('用户名/邮箱和密码不能为空', 400);
         return;
     }
 
+    $lockStatus = RateLimiter::isLockedOut($loginId, 5, 900);
+    if ($lockStatus['locked']) {
+        $response->error($lockStatus['message'], 429);
+        return;
+    }
+
     try {
-        // 查找用户（支持邮箱或用户名登录）
         if (filter_var($loginId, FILTER_VALIDATE_EMAIL)) {
-            // 如果是邮箱格式，通过邮箱查找
             $user = $userModel->getUserByEmail($loginId);
         } else {
-            // 如果是用户名，通过用户名查找
             $user = $userModel->getUserByUsername($loginId);
         }
         
         if (!$user) {
-            $response->error('邮箱或密码错误', 401);
+            RateLimiter::recordFailedAttempt($loginId, 5, 900);
+            $remaining = RateLimiter::getRemainingAttempts($loginId, 5);
+            $response->error("邮箱或密码错误，剩余尝试次数: {$remaining}", 401);
             return;
         }
 
-        // 检查用户状态
         if ($user['status'] !== 'active') {
             $response->error('用户账号已被禁用', 403);
             return;
         }
 
-        // 验证密码（支持明文和加密密码）
         $passwordValid = false;
         
-        // 先尝试用password_verify验证
         if (password_verify($data['password'], $user['password_hash'])) {
             $passwordValid = true;
-        } 
-        // 如果失败，再检查是否是明文密码（为了兼容旧数据）
-        elseif ($data['password'] === $user['password_hash']) {
+        } elseif ($data['password'] === $user['password_hash']) {
             $passwordValid = true;
-            // 自动将明文密码转换为加密密码
             $newPasswordHash = password_hash($data['password'], PASSWORD_DEFAULT);
             $userModel->updateUser($user['id'], ['password_hash' => $newPasswordHash]);
         }
         
         if (!$passwordValid) {
-            $response->error('邮箱或密码错误', 401);
+            RateLimiter::recordFailedAttempt($loginId, 5, 900);
+            $remaining = RateLimiter::getRemainingAttempts($loginId, 5);
+            $response->error("邮箱或密码错误，剩余尝试次数: {$remaining}", 401);
             return;
         }
 
-        // 更新最后登录时间
+        RateLimiter::clearAttempts($loginId);
+
         $userModel->updateLastLogin($user['id']);
 
-        // 生成JWT令牌
         $token = $jwt->generateToken([
             'user_id' => $user['id'],
             'username' => $user['username'],
@@ -274,7 +270,6 @@ function loginUser($data, $userModel, $jwt, $response) {
             'is_admin' => !empty($user['is_admin'])
         ]);
 
-        // 返回响应
         $response->success([
             'user' => [
                 'id' => $user['id'],
@@ -289,7 +284,8 @@ function loginUser($data, $userModel, $jwt, $response) {
         ], '登录成功');
 
     } catch (Exception $e) {
-        $response->error('登录失败: ' . $e->getMessage(), 500);
+        error_log('Login failed: ' . $e->getMessage());
+        $response->error('登录失败，请稍后重试', 500);
     }
 }
 

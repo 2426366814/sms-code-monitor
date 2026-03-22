@@ -3,13 +3,15 @@
  * 
  * Features:
  * - Batch processing (50 monitors per batch)
- * - Connection pooling
+ * - Connection pooling (HTTP keep-alive)
  * - Memory efficient
  * - 5 second refresh interval
  */
 
 require('dotenv').config({ path: __dirname + '/../config/.env' });
 const mysql = require('mysql2/promise');
+const http = require('http');
+const https = require('https');
 
 const DB_CONFIG = {
     host: process.env.DB_HOST || 'localhost',
@@ -17,15 +19,16 @@ const DB_CONFIG = {
     password: process.env.DB_PASS || process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'jm',
     waitForConnections: true,
-    connectionLimit: 5,
+    connectionLimit: 10,
     queueLimit: 0
 };
 
 class MonitorService {
     constructor() {
         this.pool = null;
-        this.batchSize = 50;
-        this.refreshInterval = 5000;
+        this.batchSize = parseInt(process.env.MONITOR_BATCH_SIZE) || 50;
+        this.refreshInterval = parseInt(process.env.MONITOR_INTERVAL) || 5000;
+        this.requestTimeout = parseInt(process.env.REQUEST_TIMEOUT) || 10000;
         this.isRunning = false;
         this.stats = {
             total: 0,
@@ -34,11 +37,25 @@ class MonitorService {
             error: 0
         };
         this.onCodeReceived = null;
+        
+        this.httpAgent = new http.Agent({
+            keepAlive: true,
+            maxSockets: 50,
+            maxFreeSockets: 10,
+            timeout: this.requestTimeout
+        });
+        this.httpsAgent = new https.Agent({
+            keepAlive: true,
+            maxSockets: 50,
+            maxFreeSockets: 10,
+            timeout: this.requestTimeout
+        });
     }
 
     async init() {
         this.pool = mysql.createPool(DB_CONFIG);
-        console.log('[MonitorService] Database pool created');
+        console.log('[MonitorService] Database pool created (limit: 10)');
+        console.log('[MonitorService] HTTP Agent created with keepAlive enabled');
     }
 
     async getActiveMonitors() {
@@ -50,15 +67,15 @@ class MonitorService {
 
     async fetchCode(url) {
         return new Promise((resolve) => {
-            const https = require('https');
-            const http = require('http');
+            const isHttps = url.startsWith('https');
+            const client = isHttps ? https : http;
+            const agent = isHttps ? this.httpsAgent : this.httpAgent;
             
-            const client = url.startsWith('https') ? https : http;
             const timeout = setTimeout(() => {
                 resolve({ status: 'error', code: '', message: 'Timeout' });
-            }, 10000);
+            }, this.requestTimeout);
 
-            client.get(url, (res) => {
+            client.get(url, { agent, timeout: this.requestTimeout }, (res) => {
                 let data = '';
                 res.on('data', chunk => data += chunk);
                 res.on('end', () => {
